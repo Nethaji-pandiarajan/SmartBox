@@ -1,0 +1,46 @@
+
+2022/01/13 03:32:41  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:00:19  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:00:19  Entered OTP is verified successfully for Delivery
+2022/01/13 04:01:56  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:01:56  Entered OTP is verified successfully for Delivery
+2022/01/13 04:03:06  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:03:06  Entered OTP is verified successfully for Delivery
+2022/01/13 04:03:49  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:03:49  Entered OTP is verified successfully for Delivery
+2022/01/13 04:04:56  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:04:56  Entered OTP is verified successfully for Delivery
+2022/01/13 04:05:59  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:05:59  Entered OTP is verified successfully for Delivery
+2022/01/13 04:06:45  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:06:45  Entered OTP is verified successfully for Delivery
+2022/01/13 04:17:19  Entered DC Number is Invalid for Fulfillment
+2022/01/13 04:17:19  Entered DC Number is Successfully verified for Fulfillment
+2022/01/13 04:17:19 Entered OTP is Successfully verified for Fulfillment
+2022/01/13 04:20:57  Entered SO Number is Invalid for delivery
+2022/01/13 04:20:57  Entered SO Number is Invalid for delivery
+2022/01/13 04:20:57  Entered DC Number is Successfully verified for Fulfillment
+2022/01/13 04:20:57 Entered OTP is Successfully verified for Fulfillment
+2022/01/13 04:39:59  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:39:59  Entered OTP is verified successfully for Delivery
+2022/01/13 04:39:59  Entered SOID is Verified successfully for Delivery
+2022/01/13 04:50:20  Entered SO Number is Invalid for Delivery
+2022/01/13 04:50:20  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:50:20  Entered OTP is verified successfully for Delivery
+2022/01/13 04:50:20  Entered SOID is Verified successfully for Delivery
+2022/01/13 04:52:58  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:52:58  Entered OTP is verified successfully for Delivery
+2022/01/13 04:52:58  Entered SOID is Verified successfully for Delivery
+2022/01/13 04:54:15  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:54:15  Entered OTP is verified successfully for Delivery
+2022/01/13 04:54:15  Entered SOID is Verified successfully for Delivery
+2022/01/13 04:56:44  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:56:44  Entered OTP is verified successfully for Delivery
+2022/01/13 04:56:44  Entered SOID is Verified successfully for Delivery
+2022/01/13 04:58:01  Entered SO Number is verified successfully for Delivery
+2022/01/13 04:58:01  Entered OTP is verified successfully for Delivery
+2022/01/13 04:58:01  Entered SOID is Verified successfully for Delivery
+2022/01/13 05:00:08  Entered SO Number is verified successfully for Delivery
+2022/01/13 05:00:08  Entered OTP is Invalid for Delivery
+2022/01/13 05:00:08  Entered OTP is verified successfully for Delivery
+2022/01/13 05:00:08  Entered SOID is Verified successfully for Delivery
