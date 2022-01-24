@@ -11,11 +11,22 @@ import javax.imageio.ImageIO;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;
+import com.github.sarxos.webcam.ds.fswebcam.FsWebcamDriver;
 
 public class CaptureImage {
 	// System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	// Store image as 2D matrix
-
+static {
+	
+	String osname = System.getProperty("os.name");
+	System.setProperty("org.slf4j.simpleLogger.defaultLogLevel","info");
+	System.setProperty("org.slf4j.simpleLogger.log.com.github.sarxos.webcam.ds.v4l4j","trace");
+	if(osname.equals("Windows 10")) {
+		System.out.println(osname);
+	}
+	else {
+	Webcam.setDriver(new FsWebcamDriver());}
+}
 	static Logger logger = Logger.getLogger("Logger");
 	static FileHandler fh;
 	static Date argdate = new java.util.Date(System.currentTimeMillis());
@@ -33,6 +44,7 @@ public class CaptureImage {
 
 	public static boolean captureImage() {
 		String text = "";
+		
 		Webcam webcam = Webcam.getDefault(); // Get default camera
 		if (webcam == null) // Can't find camera
 			return false;

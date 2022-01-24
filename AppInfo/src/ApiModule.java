@@ -262,7 +262,7 @@ public class ApiModule {
 	}
 
 	public static boolean FinalApiCall() throws ClientProtocolException, IOException {
-
+		//System.out.println("here");
 		String arrayString = getPropertyValue("FINAL_API_DATA");
 		String[] arr = arrayString.split("$");
 
@@ -292,7 +292,7 @@ public class ApiModule {
 			arrout.put(inarr);
 		}
 		objout.put("list", arrout);
-
+	//	System.out.println(objout);
 		String URL = getPropertyValue("server_host") + "/updateDetils";
 		HttpPost post = new HttpPost(URL);
 		String result = "";
@@ -306,7 +306,7 @@ public class ApiModule {
 
 			result = EntityUtils.toString(response.getEntity());
 		}
-
+		//System.out.println(result);
 		return true;
 	}
 

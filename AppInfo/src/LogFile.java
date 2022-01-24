@@ -58,8 +58,16 @@ public class LogFile {
 		String newDir = LogFile.createDateBasedDirectory(baseDir, dir);
 
 		try {
-
-			File f = new File(baseDir + File.separator + date + File.separator + "data.txt");
+			String orderType = ApiModule.getPropertyValue("ORDER_TYPE");
+		    String filename;
+			if (orderType.equals("REFILL")) {
+				filename = ApiModule.getPropertyValue("CURRENT_DC_NUMBER");
+				
+			} else {
+				filename= ApiModule.getPropertyValue("CURRENT_SO_NUMBER");
+				}
+			
+			File f = new File(baseDir + File.separator + date + File.separator + filename+".txt");
 			if (!f.exists()) {
 				f.createNewFile();
 			}

@@ -29,8 +29,6 @@ import javafx.scene.text.FontWeight;
 
 public class VirtualKeyboard {
 	private final VBox root;
-	private double prefWidth;
-	private double prefHeight;
 
 	/**
 	 * Creates a Virtual Keyboard.
@@ -39,10 +37,8 @@ public class VirtualKeyboard {
 	 *               target is null, KeyEvents will be dynamically forwarded to the
 	 *               focus owner in the Scene containing this keyboard.
 	 */
-	public VirtualKeyboard(ReadOnlyObjectProperty<Node> target,double prefWidth,double prefHeight) {
+	public VirtualKeyboard(ReadOnlyObjectProperty<Node> target) {
 		this.root = new VBox(5);
-		this.prefHeight=prefHeight;
-		this.prefWidth =prefWidth;
 		root.setPadding(new Insets(10));
 		root.getStyleClass().add("virtual-keyboard");
 		root.autosize();
@@ -121,8 +117,8 @@ public class VirtualKeyboard {
 	 * Creates a VirtualKeyboard which uses the focusProperty of the scene to which
 	 * it is attached as its target
 	 */
-	public VirtualKeyboard(double prefWidth,double prefHeight) {
-		this(null,prefWidth,prefHeight);
+	public VirtualKeyboard() {
+		this(null);
 	}
 
 	/**
@@ -132,11 +128,6 @@ public class VirtualKeyboard {
 	 * 
 	 * @return a view of the keyboard.
 	 */
-	public Node view(double prefWidth,double prefHeight) {
-		this.prefHeight=prefHeight;
-		this.prefWidth =prefWidth;
-		return root;
-	}
 	public Node view() {
 		return root;
 	}
@@ -171,10 +162,9 @@ public class VirtualKeyboard {
 
 		// Add a style class for css:
 		button.getStyleClass().add("virtual-keyboard-button");
-		//button.setPrefSize(46, 28);
-		button.setPrefSize(prefWidth, prefHeight);
+		button.setPrefSize(46, 28);
 		
-		button.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 11));
+		button.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 10));
 
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

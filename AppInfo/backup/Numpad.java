@@ -30,20 +30,15 @@ import javafx.scene.text.FontWeight;
 
 public class Numpad {
   private final VBox root ;
-  private Double numPadWidth;
-  private Double numPadHeight;
+  
   /**
    * Creates a Virtual Keyboard. 
    * @param target The node that will receive KeyEvents from this keyboard. 
    * If target is null, KeyEvents will be dynamically forwarded to the focus owner
    * in the Scene containing this keyboard.
- * @param numPadHeight 
- * @param numPadWidth 
    */
-  public Numpad(ReadOnlyObjectProperty<Node> target, Double numPadWidth, Double numPadHeight) {
+  public Numpad(ReadOnlyObjectProperty<Node> target) {
     this.root = new VBox(5);
-    this.numPadHeight = numPadHeight;
-    this.numPadWidth = numPadWidth;
     root.setPadding(new Insets(10));
     root.getStyleClass().add("virtual-keyboard");
     root.autosize();
@@ -111,8 +106,8 @@ public class Numpad {
   /**
    * Creates a VirtualKeyboard which uses the focusProperty of the scene to which it is attached as its target
    */
-  public Numpad(Double numPadWidth,Double numPadHeight) {
-    this(null,numPadWidth,numPadHeight);
+  public Numpad() {
+    this(null);
   }
   
   /**
@@ -153,12 +148,15 @@ public class Numpad {
     
     // Add a style class for css:
     button.getStyleClass().add("virtual-keyboard-button");
-    button.setPrefSize(numPadWidth, numPadHeight);
-    button.setStyle("-fx-background-color: e22319");
+    button.setPrefSize(60, 45);
+    button.setStyle("-fx-background-color: Blue");
     button.setTextFill(Color.WHITE);
-    button.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+    button.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+
+
     
     button.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
       public void handle(ActionEvent event) {
 
         final Node targetNode ;

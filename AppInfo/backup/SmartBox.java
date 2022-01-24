@@ -8,19 +8,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
+
 import org.apache.http.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -30,28 +29,19 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class SmartBox extends Application {
-
-	private static final String S1 = "S1";
-
-	private static final String S2 = "S2";
-
-	private static final String S3 = "S3";
 
 	String fontName = ApiModule.getPropertyValue("FONT_NAME");
 
@@ -96,8 +86,6 @@ public class SmartBox extends Application {
 	Label scantext = null;
 
 	Text PhoneNumber = null;
-
-	Text text1 = null;
 
 	Label bringParcel = null;
 
@@ -162,17 +150,6 @@ public class SmartBox extends Application {
 	Timeline timeline;
 
 	Timeline timeline2;
-	HBox boHbox = null;
-	HBox hbox = null;
-	HBox delHbox1, delHbox2, delHbox3, delHbox4, thBox1, otpHbox1, otpHbox2, otpHbox3 = null;
-	VBox vbox, otpVBox1 = null;
-	final SceneProperty sp = new SceneProperty();
-
-	private double scenCapWidth = 0;
-	private double scenCapHeight = 0;
-
-	VirtualKeyboard vkb;
-	Button clearText, backButton, resendOtp = null;
 
 	public static void main(String[] args) {
 		try {
@@ -222,59 +199,66 @@ public class SmartBox extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		sp.setSceneName(S1);
-		BorderPane borderPane = new BorderPane();
-		StackPane root = new StackPane(borderPane);
-		root.setStyle("-fx-background-image: url(\"Picture3.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
-		Scene scene;
-		if (scenCapHeight > 0 && scenCapWidth > 0) {
-			scene = new Scene(root, scenCapWidth, scenCapHeight);
-		} else {
-			scene = new Scene(root);
-		}
-		Screen screen = Screen.getPrimary();
-		Rectangle2D bounds = screen.getVisualBounds();
-		sp.setSceneWidth(bounds.getWidth());
-		sp.setSceneHeight(bounds.getHeight());
+
 		primaryStage.setTitle("Smart Box");
+
+		// Setting up GridPane
+		grid.setAlignment(Pos.CENTER);
+		grid.setPadding(new Insets(20, 20, 20, 25));
+
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(180);
+		helpButton.setTranslateX(280);
 		helpButton.setStyle("-fx-background-color: Orange");
 		helpButton.setTextFill(Color.WHITE);
 
-		text1 = new Text("YCH SMART LOCKER");
+		Text text1 = new Text("Welcome to YCH Smart Locker");
 		text1.setFill(Color.WHITE);
+		text1.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 30));
 		text1.setTextAlignment(TextAlignment.CENTER);
+		text1.setTranslateY(-130);
 		text1.setStroke(Color.BLUE);
-		HBox tHbox = new HBox();
-		tHbox.getChildren().add(text1);
-		tHbox.setAlignment(Pos.CENTER);
-		borderPane.setTop(tHbox);
 
 		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
 		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
 		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
-		PhoneNumber.setStroke(Color.YELLOW);
+		PhoneNumber.setTranslateY(185);
+		PhoneNumber.setTranslateX(-230);
+		PhoneNumber.setStroke(Color.BLUE);
 		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
 
-		boHbox = new HBox();
-		boHbox.getChildren().addAll(PhoneNumber, helpButton);
-		BorderPane.setAlignment(boHbox, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(boHbox);
+		HBox hbox = new HBox(80);
+		hbox.setTranslateX(-10);
+		hbox.setTranslateY(10);
 
-		hbox = new HBox();
+		// Pick up material Fx content
+
+		Delivery.setPrefSize(120, 120);
 		Delivery.textAlignmentProperty().set(TextAlignment.CENTER);
 		Delivery.setStyle(
 				"-fx-background-color: Orange;-fx-border-radius: 18;-fx-background-radius: 18;-fx-border-color: White; -fx-border-width: 2px;");
 		Delivery.setEffect(shadow);
 		shadow.setColor(Color.BLUE);
+
 		Delivery.setTextFill(Color.WHITE);
+		String fontName = ApiModule.getPropertyValue("FONT_NAME");
+		Delivery.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
+
 		Delivery.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent event) {
-				deliveryMaterial(scene.getWidth(), scene.getHeight());
+				deliveryMaterial();
+
 			}
 		});
+
 		// Fulfilment material content in fx
+
+		Fulfilment.setPrefSize(120, 120);
 		Fulfilment.setText("Fulfilment");
 		Fulfilment.textAlignmentProperty().set(TextAlignment.CENTER);
 		Fulfilment.setStyle("-fx-background-color: Orange");
@@ -283,126 +267,80 @@ public class SmartBox extends Application {
 				"-fx-background-color: Orange;-fx-border-radius: 18;-fx-background-radius: 18;-fx-border-color: White; -fx-border-width: 2px;");
 		Fulfilment.setEffect(shadow);
 		shadow.setColor(Color.BLUE);
+
+		Fulfilment.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 		Fulfilment.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent event) {
-				FulfillmentMaterial(scene.getWidth(), scene.getHeight());
+				FulfillmentMaterial();
+
 			}
 		});
 		hbox.getChildren().addAll(Delivery, Fulfilment);
-		hbox.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(hbox, Pos.TOP_CENTER);
-		borderPane.setCenter(hbox);
+		grid.add(hbox, 1, 0);
+
 		enterButton.setStyle("-fx-background-color: Green");
 		scanButton.setStyle("-fx-background-color: Orange");
 		enterButton.setTextFill(Color.WHITE);
 		scanButton.setTextFill(Color.WHITE);
 
-		primaryStage.setMaximized(Boolean.TRUE);
-		if (sp.getSceneName().equalsIgnoreCase(S1)) {
-			updateComponentBasedOnWidth(sp);
-		}
-		if (sp.getSceneName().equalsIgnoreCase(S1)) {
-			updateComponentBasedOnHeight(sp);
-		}
-		// primaryStage.setFullScreen(Boolean.TRUE);
+		StackPane root = new StackPane(grid);
+		root.getChildren().addAll(text1, PhoneNumber, helpButton);
+		root.setStyle("-fx-background-image: url(\"banner.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8;");
+		Scene scene = new Scene(root, 1200, 650);
 		primaryStage.setScene(scene);
-		primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
-			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth,
-					Number newSceneWidth) {
-				System.out.println(newSceneWidth);
-				sp.setSceneWidth((Double) newSceneWidth);
-				if (sp.getSceneName().equalsIgnoreCase(S1)) {
-					updateComponentBasedOnWidth(sp);
-				}
-				if (sp.getSceneName().equalsIgnoreCase(S2)) {
-					updateDelCompBasedOnWidth(sp);
-				}
-				if (sp.getSceneName().equalsIgnoreCase(S3)) {
-					updateOtpCompBasedOnWidth(sp);
-				}
-			}
-		});
-		primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
-			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight,
-					Number newSceneHeight) {
-				sp.setSceneHeight((Double) newSceneHeight);
-				System.out.println(newSceneHeight);
-				if (sp.getSceneName().equalsIgnoreCase(S1)) {
-					updateComponentBasedOnHeight(sp);
-				}
-				if (sp.getSceneName().equalsIgnoreCase(S2)) {
-					updateDelCompBasedOnHeight(sp);
-				}
-				if (sp.getSceneName().equalsIgnoreCase(S3)) {
-					updateOtpCompBasedOnHeight(sp);
-				}
-			}
-		});
-		primaryStage.setResizable(false);
+	//	primaryStage.setResizable();
 		primaryStage.show();
-	}
 
-	protected void updateComponentBasedOnHeight(SceneProperty sp) {
-		Delivery.setPrefHeight(getWidthPercentage(30, sp.getSceneHeight()));
-		Fulfilment.setPrefHeight(getWidthPercentage(30, sp.getSceneHeight()));
-		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
-	}
-
-	protected void updateComponentBasedOnWidth(SceneProperty sp) {
-		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(2, sp.getSceneWidth())));
-		text1.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(4, sp.getSceneWidth())));
-		PhoneNumber.setTranslateX(getWidthPercentage(18, sp.getSceneWidth()));
-		boHbox.setSpacing(getWidthPercentage(70, sp.getSceneWidth()));
-		hbox.setSpacing(getWidthPercentage(22, sp.getSceneWidth()));
-		Delivery.setPrefWidth(getWidthPercentage(20, sp.getSceneWidth()));
-		Delivery.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2.5, sp.getSceneWidth())));
-		Fulfilment.setPrefWidth(getWidthPercentage(20, sp.getSceneWidth()));
-		Fulfilment.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2.5, sp.getSceneWidth())));
-	}
-
-	private double getWidthPercentage(double p, double width) {
-		return Math.round(p * width / 100);
 	}
 
 	// Delivery material Scene in javafx
 
-	public void deliveryMaterial(double sWidth, double sHeight) {
+	public void deliveryMaterial() {
 
 		String LOG_DELIVERY_SO_NUMBER_FAILURE = ApiModule.getPropertyValue("LOG_DELIVERY_SO_NUMBER_FAILURE");
 		String LOG_DELIVERY_SO_NUMBER_SUCCESS = ApiModule.getPropertyValue("LOG_DELIVERY_SO_NUMBER_SUCCESS");
+		
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
 
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
-		sp.setSceneName(S2);
-		BorderPane borderPane = new BorderPane();
-
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
 		homeButton.setStyle("-fx-background-color: Orange");
-		HBox tHbox = new HBox();
-		tHbox.getChildren().add(homeButton);
-		tHbox.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(homeButton);
-		scenCapWidth = sWidth;
-		scenCapHeight = sHeight;
+
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent e) {
 				setLayout();
 			}
 		});
-		scantext = new Label("SO # :");
+
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
+		helpButton.setStyle("-fx-background-color: Orange");
+		helpButton.setTextFill(Color.WHITE);
+
+		scantext = new Label("Enter/Scan SO Number:");
+		scantext.setTranslateX(100);
+		scantext.setTranslateY(-200);
 		scantext.setTextFill(Color.WHITE);
+		scantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
+
 		scan = new TextField();
-		scan.requestFocus();
-		scan.setFocusTraversable(Boolean.TRUE);
 		scan.setPromptText("Enter/Scan SO Number:");
+		scan.setMaxWidth(190);
+		scan.setTranslateX(330);
+		scan.setTranslateY(-200);
 		scan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
+
 		scan.setOnKeyReleased(eventAc -> {
 			if (scan.getText().length() <= 20) {
 				if (eventAc.getCode() == KeyCode.ENTER) {
@@ -428,19 +366,26 @@ public class SmartBox extends Application {
 						errorAlert.showAndWait();
 					} else {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SO_NUMBER_SUCCESS);
+							LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_SO_NUMBER_SUCCESS);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
 						}
-						deliveryOtpLayout(soNumber, sp.getSceneWidth(), sp.getSceneHeight());
+						deliveryOtpLayout(soNumber);
 					}
 				}
 
 			}
 
 		});
+
+		enterButton.setTranslateX(-210);
+		enterButton.setTranslateY(-200);
+		enterButton.setPrefSize(100, 36);
+
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent e) {
 				if (scan.getText().length() <= 20) {
 					soNumber = scan.getText();
@@ -455,7 +400,7 @@ public class SmartBox extends Application {
 					}
 					if (status.equalsIgnoreCase("FAILURE")) {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SO_NUMBER_FAILURE);
+							LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_SO_NUMBER_FAILURE);
 						} catch (Exception ex) {
 
 							ex.printStackTrace();
@@ -466,18 +411,26 @@ public class SmartBox extends Application {
 						errorAlert.showAndWait();
 					} else {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SO_NUMBER_SUCCESS);
+							LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_SO_NUMBER_SUCCESS);
+							// the following statement is used to log any messages
+							// logger.info();
 						} catch (Exception ex) {
 							ex.printStackTrace();
 						}
 
-						deliveryOtpLayout(soNumber, sp.getSceneWidth(), sp.getSceneHeight());
+						deliveryOtpLayout(soNumber);
 					}
 				}
 
 			}
 		});
+
+		scanButton.setTranslateX(-150);
+		scanButton.setTranslateY(-200);
+		scanButton.setPrefSize(60, 36);
 		scanButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent e) {
 				try {
 					Thread.sleep(5000);
@@ -487,7 +440,7 @@ public class SmartBox extends Application {
 				}
 				if (barcodeScanner.getBarcodetext().equals("noValue")) {
 					try {
-						LogFile.logfile(logDate + "/s " + LOG_DELIVERY_SO_NUMBER_FAILURE);
+						LogFile.logfile(logDate + "/s "+ LOG_DELIVERY_SO_NUMBER_FAILURE);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -498,7 +451,7 @@ public class SmartBox extends Application {
 				} else {
 					scan.setText(barcodeScanner.getBarcodetext());
 					try {
-						LogFile.logfile(logDate + "/s " + LOG_DELIVERY_SO_NUMBER_SUCCESS);
+						LogFile.logfile(logDate + "/s "+ LOG_DELIVERY_SO_NUMBER_SUCCESS);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -509,86 +462,37 @@ public class SmartBox extends Application {
 
 			}
 		});
-		delHbox1 = new HBox();
-		delHbox1.getChildren().addAll(scantext, scan, enterButton, scanButton);
-		delHbox1.setAlignment(Pos.CENTER);
-		vkb = new VirtualKeyboard(getWidthPercentage(4, sp.getSceneWidth()),
-				getWidthPercentage(5, sp.getSceneHeight()));
-		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
 
-		delHbox3 = new HBox();
-		delHbox3.getChildren().add(vkb.view());
-		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox1, delHbox3);
-		vbox.setAlignment(Pos.CENTER);
-		delHbox2 = new HBox();
-		delHbox2.getChildren().add(vbox);
-		delHbox2.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(delHbox2, Pos.CENTER);
-		borderPane.setCenter(delHbox2);
-		helpButton.setTextAlignment(TextAlignment.CENTER);
-		helpButton.setStyle("-fx-background-color: Orange");
-		helpButton.setTextFill(Color.WHITE);
 		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
 		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
 		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
-		PhoneNumber.setStroke(Color.YELLOW);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
 		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
-		delHbox4 = new HBox();
-		delHbox4.getChildren().addAll(PhoneNumber, helpButton);
-		BorderPane.setAlignment(delHbox4, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(delHbox4);
 
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sWidth, sHeight);
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
-		updateDelCompBasedOnWidth(sp);
-		updateDelCompBasedOnHeight(sp);
+		VirtualKeyboard vkb = new VirtualKeyboard();
+		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
+		vkb.view().setTranslateX(25);
+		vkb.view().setTranslateY(85);
+
+		grid2.add(scantext, 0, 5);
+		grid2.add(scan, 0, 5);
+		grid2.add(enterButton, 1, 5);
+		grid2.add(scanButton, 1, 5);
+		grid2.add(vkb.view(), 0, 3);
+
+		StackPane root2 = new StackPane(grid2);
+		root2.getChildren().addAll(homeButton, PhoneNumber, helpButton);
+
+		Scene scene = new Scene(root2, 1200, 650);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8");
+
 		primaryStage.setScene(scene);
-	}
+		primaryStage.setResizable(false);
+		primaryStage.show();
 
-	protected void updateDelCompBasedOnWidth(SceneProperty sp) {
-		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(2, sp.getSceneWidth())));
-		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(2, sp.getSceneWidth())));
-		scantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2.5, sp.getSceneWidth())));
-		delHbox1.setSpacing(getWidthPercentage(2, sp.getSceneWidth()));
-		scan.setPrefWidth(getWidthPercentage(21, sp.getSceneWidth()));
-		scan.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1, sp.getSceneWidth())));
-		enterButton.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		scanButton.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		enterButton.setPrefWidth(getWidthPercentage(10, sp.getSceneWidth()));
-		scanButton.setPrefWidth(getWidthPercentage(10, sp.getSceneWidth()));
-		PhoneNumber.setTranslateX(getWidthPercentage(18, sp.getSceneWidth()));
-		delHbox4.setSpacing(getWidthPercentage(70, sp.getSceneWidth()));
-		vbox.setSpacing(getWidthPercentage(2.5, sp.getSceneWidth()));
-		if (vkb != null) {
-			VBox keyboardBox = (VBox) vkb.view();
-			if (keyboardBox != null && keyboardBox.getChildren().size() > 0) {
-				for (Node hboxNode : keyboardBox.getChildren()) {
-					HBox kHbox = (HBox) hboxNode;
-					for (Node node : kHbox.getChildren()) {
-						if (node instanceof Button) {
-							Button keysButton = (Button) node;
-							keysButton.setPrefSize(getWidthPercentage(4, sp.getSceneWidth()),
-									getWidthPercentage(5, sp.getSceneHeight()));
-						}
-					}
-				}
-			}
-		}
-	}
-
-	protected void updateDelCompBasedOnHeight(SceneProperty sp) {
-		enterButton.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));
-		scanButton.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));
-		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
 	}
 
 	private void countDown() {
@@ -609,29 +513,38 @@ public class SmartBox extends Application {
 			seconds--;
 		}
 
+		// defaultTime.setMinutes(minutes);
+		// defaultTime.setSeconds(seconds);
+		// timer.setText(defaultTime.toString());
 	}
 
-	public void deliveryOtpLayout(String soNumber, double sWidth, double sHeight) {
+	public void deliveryOtpLayout(String soNumber) {
 
 		timeline = new Timeline(new KeyFrame(Duration.seconds(1), event2 -> {
 			countDown();
+			// setLayout();
+
 		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();
 
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
-		sp.setSceneName(S3);
-		BorderPane borderPane = new BorderPane();
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+
+		timerLabel.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		timerLabel.setTranslateX(250);
+		timerLabel.setTranslateY(-60);
 		timerLabel.setTextFill(Color.WHITE);
+
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
 		homeButton.setStyle("-fx-background-color: Orange");
-		thBox1 = new HBox();
-		thBox1.getChildren().addAll(homeButton, timerLabel);
-		thBox1.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(thBox1);
+		homeButton.setTextFill(Color.WHITE);
+
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent e) {
 				minutes = 14;
 				seconds = 59;
@@ -641,25 +554,41 @@ public class SmartBox extends Application {
 			}
 		});
 
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
 		helpButton.setStyle("-fx-background-color: Orange");
 		helpButton.setTextFill(Color.WHITE);
-		otpHbox1 = new HBox();
 
-		otpText = new Label("ENTER YOUR OTP!");
+		otpText = new Label("Enter your OTP!");
+		otpText.setTranslateX(10);
+		otpText.setTranslateY(-100);
 		otpText.setTextFill(Color.WHITE);
+		otpText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+
 		otpScan = new TextField();
 		otpScan.setPromptText("Enter OTP");
+		otpScan.setTranslateX(10);
+		otpScan.setTranslateY(-60);
+		otpScan.setMaxWidth(200);
 
-		clearText = new Button("X");
+		Button clearText = new Button("X");
+		clearText.setTranslateX(78);
+		clearText.setTranslateY(-60);
 		clearText.setStyle("-fx-background-color: Orange");
 		clearText.setTextFill(Color.WHITE);
+		clearText.setPrefSize(63, 34);
+		clearText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
 		clearText.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent event) {
 				try {
 					otpScan.setText(otpScan.getText().substring(0, otpScan.getText().length() - 1));
 				} catch (Exception e) {
 					Alert errorAlert1 = new Alert(AlertType.CONFIRMATION);
+
 					errorAlert1.setHeaderText("Admin Msg: No Data");
 					errorAlert1.setContentText("Textfield is empty");
 					errorAlert1.showAndWait();
@@ -667,53 +596,79 @@ public class SmartBox extends Application {
 
 			}
 		});
+
 		otpScan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
+
+		enterButton.setTranslateX(160);
+		enterButton.setTranslateY(-60);
+		enterButton.setPrefSize(60, 36);
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent event) {
 				String otp = otpScan.getText();
 				if (otp.equals("")) {
 					Alert errorAlert1 = new Alert(AlertType.CONFIRMATION);
+
 					errorAlert1.setHeaderText("Admin Msg: Invalid OTP");
 					errorAlert1.setContentText("Please enter valid OTP");
 					errorAlert1.showAndWait();
 				} else {
-					deliveryCheckOtp(soNumber, otp, sp.getSceneWidth(), sp.getSceneHeight());
+					deliveryCheckOtp(soNumber, otp);
 				}
 			}
 		});
-		otpHbox1.setAlignment(Pos.CENTER);
-		otpHbox1.getChildren().addAll(otpScan, clearText, enterButton);
 
-		Numpad np = new Numpad(getWidthPercentage(8, sp.getSceneWidth()), getWidthPercentage(4, sp.getSceneWidth()));
+		Numpad np = new Numpad();
 		np.view().setStyle("-fx-border-radius: 5;");
+		np.view().setTranslateX(10);
+		np.view().setTranslateY(80);
 
-		otpHbox2 = new HBox();
-		otpHbox2.setAlignment(Pos.CENTER);
-		backButton = new Button();
+		grid2.add(np.view(), 0, 3);
+
+		HBox hbox = new HBox(520);
+		hbox.setTranslateX(50);
+		hbox.setTranslateY(380);
+
+		Button backButton = new Button();
+
 		backButton.setText("<- Back");
-		backButton.setStyle("-fx-background-color: Orange");
+		backButton.setStyle("-fx-background-color: Red");
 		backButton.setTextFill(Color.WHITE);
+		backButton.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
+
 		backButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent event) {
 				minutes = 14;
 				seconds = 59;
 				timeline.stop();
-				deliveryMaterial(sp.getSceneWidth(), sp.getSceneHeight());
+				deliveryMaterial();
+
 			}
 		});
-		resendOtp = new Button();
+
+		Button resendOtp = new Button();
+
 		resendOtp.setText("Resend Otp");
 		resendOtp.setStyle("-fx-background-color: Green");
 		resendOtp.setTextFill(Color.WHITE);
+		resendOtp.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
+
 		resendOtp.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent event) {
 				try {
+
 					String result = ApiModule.DeliveryValidate(soNumber);
 					JSONObject resultjson = new JSONObject(result);
 					status = resultjson.getString("status");
 					if (status.equalsIgnoreCase("SUCCESS")) {
 						Alert errorAlert1 = new Alert(AlertType.CONFIRMATION);
+
 						errorAlert1.setHeaderText("Admin Msg: Success");
 						errorAlert1.setContentText("OTP Successfully resend");
 						errorAlert1.showAndWait();
@@ -722,73 +677,37 @@ public class SmartBox extends Application {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+
 			}
 		});
 
 		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
-		PhoneNumber.setFill(Color.YELLOW);
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
+		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
 		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
 		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
 
-		otpHbox2.getChildren().addAll(backButton, resendOtp);
-		otpVBox1 = new VBox();
-		otpVBox1.getChildren().addAll(otpText, otpHbox1, np.view(), otpHbox2);
-		otpVBox1.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(otpVBox1, Pos.TOP_CENTER);
-		borderPane.setCenter(otpVBox1);
+		hbox.getChildren().addAll(backButton, resendOtp);
 
-		otpHbox3 = new HBox();
-		otpHbox3.getChildren().addAll(PhoneNumber, helpButton);
-		otpHbox3.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(otpHbox3, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(otpHbox3);
-		updateOtpCompBasedOnWidth(sp);
-		updateOtpCompBasedOnHeight(sp);
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sp.getSceneWidth(), sp.getSceneHeight());
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
+		StackPane root2 = new StackPane(grid2);
+		Scene scene = new Scene(root2, 800, 480);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8;");
+		root2.getChildren().addAll(otpText, otpScan, clearText, homeButton, enterButton, PhoneNumber, helpButton, hbox,
+				timerLabel);
 		primaryStage.setScene(scene);
-	}
+		primaryStage.setResizable(false);
+		primaryStage.show();
 
-	protected void updateOtpCompBasedOnWidth(SceneProperty sp) {
-		timerLabel.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(2, sp.getSceneWidth())));
-		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(2, sp.getSceneWidth())));
-		otpText.setFont(
-				Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2, sp.getSceneWidth())));
-		otpScan.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1, sp.getSceneWidth())));
-		clearText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(1.5, sp.getSceneWidth())));
-		backButton.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2.5, sp.getSceneWidth())));
-		resendOtp.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2.5, sp.getSceneWidth())));
-		timerLabel.setTranslateX(getWidthPercentage(35, sp.getSceneWidth()));
-		otpHbox1.setSpacing(getWidthPercentage(1, sp.getSceneWidth()));
-		otpScan.setPrefWidth(getWidthPercentage(12, sp.getSceneWidth()));
-		otpHbox2.setSpacing(getWidthPercentage(37, sp.getSceneWidth()));
-		otpVBox1.setSpacing(getWidthPercentage(1, sp.getSceneWidth()));
-		PhoneNumber.setTranslateX(getWidthPercentage(18, sp.getSceneWidth()));
-		otpHbox3.setSpacing(getWidthPercentage(70, sp.getSceneWidth()));
-	}
-
-	protected void updateOtpCompBasedOnHeight(SceneProperty sp) {
-		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
-		otpScan.setPrefHeight(getWidthPercentage(5, sp.getSceneHeight()));
 	}
 
 	// Check deliveryCheckOtp
 
-	private void deliveryCheckOtp(String soNumber, String otpNumber, double sWidth, double sHeight) {
+	private void deliveryCheckOtp(String soNumber, String otpNumber) {
 		String LOG_DELIVERY_OTP_FAILURE = ApiModule.getPropertyValue("LOG_DELIVERY_OTP_FAILURE");
 		String LOG_DELIVERY_OTP_SUCCESS = ApiModule.getPropertyValue("LOG_DELIVERY_OTP_SUCCESS");
-
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
 
 		JSONObject resultjson = null;
 		try {
@@ -805,8 +724,8 @@ public class SmartBox extends Application {
 				wrongOtp++;
 				try {
 
-					LogFile.logfile(logDate + "\s " + LOG_DELIVERY_OTP_FAILURE);
-
+					LogFile.logfile(logDate + "\s " +LOG_DELIVERY_OTP_FAILURE);
+					
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -817,7 +736,7 @@ public class SmartBox extends Application {
 				errorAlert.showAndWait();
 			} else {
 				try {
-					LogFile.logfile(logDate + "\s " + LOG_DELIVERY_OTP_SUCCESS);
+					LogFile.logfile(logDate + "\s "+LOG_DELIVERY_OTP_SUCCESS);
 
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -829,13 +748,13 @@ public class SmartBox extends Application {
 				ApiModule.setpropertyValue("ORDER_TYPE", "DELIVERY");
 				int scanSize = ApiModule.getScanSize(resultjson.toString());
 				ApiModule.setpropertyValue("DELIVERY_TOTAL_SOID", String.valueOf(scanSize));
-				deliverySOID(sp.getSceneWidth(), sp.getSceneHeight());
+				deliverySOID();
 
 			}
 		} catch (IOException e) {
 			try {
 
-				LogFile.logfile(logDate + "\s " + LOG_DELIVERY_OTP_FAILURE);
+				LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_OTP_FAILURE);
 
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -850,31 +769,25 @@ public class SmartBox extends Application {
 
 	}
 
-	public void deliverySOID(double sWidth, double sHeight) {
-
+	public void deliverySOID() {
+		
 		String LOG_DELIVERY_SOID_NUMBER_FAILURE = ApiModule.getPropertyValue("LOG_DELIVERY_SOID_NUMBER_FAILURE");
 		String LOG_DELIVERY_SOID_NUMBER_SUCCESS = ApiModule.getPropertyValue("LOG_DELIVERY_SOID_NUMBER_SUCCESS");
-
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
 
 		String deliverytotalSOID = "";
 		String deliveryscannedSOID = "";
 		Label deliveryscannedSOIDtext;
 		Label deliverytotalSOIDtext;
 
-		BorderPane borderPane = new BorderPane();
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
 
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
 		homeButton.setStyle("-fx-background-color: Orange");
-
-		HBox tHbox = new HBox();
-		tHbox.getChildren().add(homeButton);
-		tHbox.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(homeButton);
-		scenCapWidth = sWidth;
-		scenCapHeight = sHeight;
 
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -884,7 +797,13 @@ public class SmartBox extends Application {
 			}
 		});
 
-		VBox SOIDvbox = new VBox();
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
+		helpButton.setStyle("-fx-background-color: Orange");
+		helpButton.setTextFill(Color.WHITE);
+
 		deliverytotalSOID = ApiModule.getPropertyValue("DELIVERY_TOTAL_SOID");
 		deliveryscannedSOID = ApiModule.getPropertyValue("DELIVERY_SCANNED_SOID");
 
@@ -892,29 +811,29 @@ public class SmartBox extends Application {
 
 		deliveryscannedSOIDtext = new Label("Scanned SOID: " + deliveryscannedSOID);
 
+		deliverytotalSOIDtext.setMaxWidth(400);
+		deliverytotalSOIDtext.setTranslateX(280);
+		deliverytotalSOIDtext.setTranslateY(-190);
 		deliverytotalSOIDtext.setTextFill(Color.WHITE);
-		deliverytotalSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		deliverytotalSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
+		deliverytotalSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
 
+		deliveryscannedSOIDtext.setMaxWidth(400);
+		deliveryscannedSOIDtext.setTranslateX(280);
+		deliveryscannedSOIDtext.setTranslateY(-170);
 		deliveryscannedSOIDtext.setTextFill(Color.WHITE);
-		deliveryscannedSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		deliveryscannedSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
+		deliveryscannedSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
 
-		SOIDvbox.getChildren().addAll(deliverytotalSOIDtext, deliveryscannedSOIDtext);
-		SOIDvbox.setAlignment(Pos.CENTER);
-
-		BorderPane.setAlignment(SOIDvbox, Pos.TOP_RIGHT);
-		borderPane.setTop(SOIDvbox);
-
-		scantext = new Label("SOID # :");
+		scantext = new Label("Enter/Scan SOID Number:");
+		scantext.setTranslateX(70);
+		scantext.setTranslateY(-230);
 		scantext.setTextFill(Color.WHITE);
+		scantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 
 		scan = new TextField();
 		scan.setPromptText("Enter/Scan SOID Number:");
-		scan.requestFocus();
-		scan.setFocusTraversable(Boolean.TRUE);
+		scan.setMaxWidth(190);
+		scan.setTranslateX(330);
+		scan.setTranslateY(-230);
 		scan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 
@@ -928,7 +847,7 @@ public class SmartBox extends Application {
 				if (Arrays.asList(SOIDArray).contains(deliverySoidNumber)) {
 					try {
 
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_FAILURE);
+						LogFile.logfile(logDate + "\s "+LOG_DELIVERY_SOID_NUMBER_FAILURE);
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -944,7 +863,7 @@ public class SmartBox extends Application {
 					if (isSoidValid) {
 						try {
 
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_SUCCESS);
+							LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_SOID_NUMBER_SUCCESS);
 
 						} catch (Exception ex) {
 
@@ -963,7 +882,7 @@ public class SmartBox extends Application {
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						deliveryProductCode(deliverySoidNumber,sp.getSceneWidth(), sp.getSceneHeight());
+						deliveryProductCode(deliverySoidNumber);
 					} else {
 						try {
 
@@ -981,6 +900,10 @@ public class SmartBox extends Application {
 				}
 			}
 		});
+
+		enterButton.setTranslateX(-220);
+		enterButton.setTranslateY(-230);
+		enterButton.setPrefSize(90, 36);
 
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -994,8 +917,11 @@ public class SmartBox extends Application {
 				if (Arrays.asList(SOIDArray).contains(deliverySoidNumber)) {
 					try {
 
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_FAILURE);
+						LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_SOID_NUMBER_FAILURE);
+						// the following statement is used to log any messages
+						// logger.info("Entered OTP is Invalid for Delivery");
 					} catch (Exception ex) {
+						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
 					Alert errorAlert = new Alert(AlertType.ERROR);
@@ -1010,9 +936,11 @@ public class SmartBox extends Application {
 					if (isSoidValid) {
 						try {
 
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_SUCCESS);
-
+							LogFile.logfile(logDate + "\s "+LOG_DELIVERY_SOID_NUMBER_SUCCESS);
+							// the following statement is used to log any messages
+							// logger.info("Entered OTP is Invalid for Delivery");
 						} catch (Exception ex) {
+							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 						SOIDArray = Arrays.copyOf(SOIDArray, SOIDArray.length + 1);
@@ -1025,17 +953,22 @@ public class SmartBox extends Application {
 						}
 
 						try {
+							// StringUtils.join(SOIDArray, ",");
 							ApiModule.setpropertyValue("CHECK_TRACKNO_ENTERED", fs);
 						} catch (IOException e1) {
+							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 
-						deliveryProductCode(deliverySoidNumber,sp.getSceneWidth(), sp.getSceneHeight());
+						deliveryProductCode(deliverySoidNumber);
 					} else {
 						try {
 
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_FAILURE);
+							LogFile.logfile(logDate + "\s "+LOG_DELIVERY_SOID_NUMBER_FAILURE);
+							// the following statement is used to log any messages
+							// logger.info("Entered OTP is Invalid for Delivery");
 						} catch (Exception ex) {
+							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 
@@ -1050,6 +983,10 @@ public class SmartBox extends Application {
 			}
 		});
 
+		scanButton.setTranslateX(-160);
+		scanButton.setTranslateY(-230);
+		scanButton.setPrefSize(60, 36);
+
 		scanButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -1057,11 +994,12 @@ public class SmartBox extends Application {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (barcodeScanner.getBarcodetext().equals("noValue")) {
 					try {
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_FAILURE);
+						LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_SOID_NUMBER_FAILURE);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -1072,8 +1010,11 @@ public class SmartBox extends Application {
 				} else {
 					try {
 
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_SUCCESS);
+						LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_SOID_NUMBER_SUCCESS);
+						// the following statement is used to log any messages
+						// logger.info("Entered OTP is Invalid for Delivery");
 					} catch (Exception ex) {
+						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
 					scan.setText(barcodeScanner.getBarcodetext());
@@ -1085,77 +1026,66 @@ public class SmartBox extends Application {
 			}
 		});
 
-		delHbox1 = new HBox();
-		delHbox1.getChildren().addAll(scantext, scan, enterButton, scanButton);
-		delHbox1.setAlignment(Pos.CENTER);
-		vkb = new VirtualKeyboard(getWidthPercentage(4, sp.getSceneWidth()),
-				getWidthPercentage(5, sp.getSceneHeight()));
-		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
+		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
-		delHbox3 = new HBox();
-		delHbox3.getChildren().add(vkb.view());
-		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox1, delHbox3);
-		vbox.setAlignment(Pos.CENTER);
-		delHbox2 = new HBox();
-		delHbox2.getChildren().add(vbox);
-		delHbox2.setAlignment(Pos.CENTER);
-
-		BorderPane.setAlignment(delHbox2, Pos.CENTER);
-		borderPane.setCenter(delHbox2);
-
-		helpButton.setTextAlignment(TextAlignment.CENTER);
-		helpButton.setStyle("-fx-background-color: Orange");
-		helpButton.setTextFill(Color.WHITE);
+			@Override
+			public void handle(ActionEvent e) {
+				setLayout();
+			}
+		});
 
 		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
 		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
 		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
-		PhoneNumber.setStroke(Color.YELLOW);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
 		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
 
-		delHbox4 = new HBox();
-		delHbox4.getChildren().addAll(PhoneNumber, helpButton);
-		BorderPane.setAlignment(delHbox4, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(delHbox4);
+		VirtualKeyboard vkb = new VirtualKeyboard();
+		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
+		vkb.view().setTranslateX(25);
+		vkb.view().setTranslateY(85);
 
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sWidth, sHeight);
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
+		grid2.add(scantext, 0, 4);
+		grid2.add(scan, 0, 4);
+		grid2.add(enterButton, 1, 4);
+		grid2.add(scanButton, 1, 4);
 
-		updateDelCompBasedOnWidth(sp);
-		updateDelCompBasedOnHeight(sp);
+		grid2.add(vkb.view(), 0, 3);
+
+		StackPane root2 = new StackPane(grid2);
+		root2.getChildren().addAll(homeButton, PhoneNumber, helpButton, deliverytotalSOIDtext, deliveryscannedSOIDtext);
+
+		Scene scene = new Scene(root2, 800, 480);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8");
+
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
+		primaryStage.show();
 
 	}
 
-	public void deliveryProductCode(String deliverySoidNumber,double sWidth,double sHeight) {
-
+	public void deliveryProductCode(String deliverySoidNumber) {
+		
 		String LOG_DELIVERY_PRODUCT_CODE_FAILURE = ApiModule.getPropertyValue("LOG_DELIVERY_SO_NUMBER_FAILURE");
 		String LOG_DELIVERY_PRODUCT_CODE_SUCCESS = ApiModule.getPropertyValue("LOG_DELIVERY_SO_NUMBER_SUCCESS");
 
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
-		
 		String deliverytotalSOID = "";
 		String deliveryscannedSOID = "";
 		Label deliveryscannedSOIDtext;
 		Label deliverytotalSOIDtext;
 
-		BorderPane borderPane = new BorderPane();
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
 
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
 		homeButton.setStyle("-fx-background-color: Orange");
-		
-		HBox tHbox = new HBox();
-		tHbox.getChildren().add(homeButton);
-		tHbox.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(homeButton);
-		scenCapWidth = sWidth;
-		scenCapHeight = sHeight;
 
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1165,64 +1095,72 @@ public class SmartBox extends Application {
 			}
 		});
 
-		VBox SOIDvbox = new VBox();		
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
+		helpButton.setStyle("-fx-background-color: Orange");
+		helpButton.setTextFill(Color.WHITE);
 
 		deliverytotalSOID = ApiModule.getPropertyValue("DELIVERY_TOTAL_SOID");
 		deliveryscannedSOID = ApiModule.getPropertyValue("DELIVERY_SCANNED_SOID");
 
 		deliverytotalSOIDtext = new Label("Total SOID: " + deliverytotalSOID);
-		deliverytotalSOIDtext.setTextFill(Color.WHITE);
-		deliverytotalSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		deliverytotalSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
-		
+
 		deliveryscannedSOIDtext = new Label("Scanned SOID: " + deliveryscannedSOID);
+
+		deliverytotalSOIDtext.setMaxWidth(400);
+		deliverytotalSOIDtext.setTranslateX(280);
+		deliverytotalSOIDtext.setTranslateY(-190);
+		deliverytotalSOIDtext.setTextFill(Color.WHITE);
+		deliverytotalSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
+
+		deliveryscannedSOIDtext.setMaxWidth(400);
+		deliveryscannedSOIDtext.setTranslateX(280);
+		deliveryscannedSOIDtext.setTranslateY(-170);
 		deliveryscannedSOIDtext.setTextFill(Color.WHITE);
-		deliveryscannedSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		deliveryscannedSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
-		
-		SOIDvbox.getChildren().addAll(deliverytotalSOIDtext, deliveryscannedSOIDtext);
-		SOIDvbox.setAlignment(Pos.CENTER);
+		deliveryscannedSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
 
-
-		Label SOIDscantext = new Label("SOID # :");
+		Label SOIDscantext = new Label("Enter/Scan SOID Number:");
+		SOIDscantext.setMaxWidth(400);
+		SOIDscantext.setTranslateX(70);
+		SOIDscantext.setTranslateY(-230);
 		SOIDscantext.setTextFill(Color.WHITE);
 		SOIDscantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
-		SOIDscantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2.5, sp.getSceneWidth())));
-		
+
 		TextField SOIDscan = new TextField();
 		SOIDscan.setPromptText("Enter/Scan SOID Number:");
-		SOIDscan.setPrefWidth(getWidthPercentage(21, sp.getSceneWidth()));
-		SOIDscan.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1, sp.getSceneWidth())));
-
+		SOIDscan.setMaxWidth(190);
+		SOIDscan.setTranslateX(330);
+		SOIDscan.setTranslateY(-230);
 		SOIDscan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 		SOIDscan.setText(deliverySoidNumber);
 
 		Button SOIDenterButton = new Button("Enter");
-		SOIDenterButton.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		SOIDenterButton.setPrefWidth(getWidthPercentage(10, sp.getSceneWidth()));
-		SOIDenterButton.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));	
+		SOIDenterButton.setTranslateX(-220);
+		SOIDenterButton.setTranslateY(-230);
+		SOIDenterButton.setPrefSize(90, 36);
 		SOIDenterButton.setDisable(true);
 
 		Button SOIDscanButton = new Button("Scan");
-		SOIDscanButton.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));
-		SOIDscanButton.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		SOIDscanButton.setPrefWidth(getWidthPercentage(10, sp.getSceneWidth()));
+		SOIDscanButton.setTranslateX(-160);
+		SOIDscanButton.setTranslateY(-230);
+		SOIDscanButton.setPrefSize(60, 36);
 		SOIDscanButton.setDisable(true);
 
-		scantext = new Label("PRODUCT CODE # :");
+		scantext = new Label("Enter/Scan Product Code:");
+		scantext.setMaxWidth(400);
+		scantext.setTranslateX(70);
+		scantext.setTranslateY(-200);
 		scantext.setTextFill(Color.WHITE);
 		scantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 
 		scan = new TextField();
 		scan.setPromptText("Enter/Scan Product Code:");
-		scan.requestFocus();
-		scan.setFocusTraversable(Boolean.TRUE);
+		scan.setMaxWidth(190);
+		scan.setTranslateX(330);
+		scan.setTranslateY(-200);
 		scan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 
@@ -1235,7 +1173,7 @@ public class SmartBox extends Application {
 					boolean isProductCodeValid = ApiModule.validProductCode(jsonArray, deliverySoidNumber, productCode);
 					if (isProductCodeValid) {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_SUCCESS);
+							LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_PRODUCT_CODE_SUCCESS);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -1267,6 +1205,7 @@ public class SmartBox extends Application {
 
 							try {
 								ApiModule.setpropertyValue("FINAL_API_DATA", fs);
+								// ImageCapture();
 								String scannedSOID = ApiModule.getPropertyValue("DELIVERY_SCANNED_SOID");
 								int scannedSOIDint = Integer.parseInt(scannedSOID);
 								scannedSOIDint++;
@@ -1278,7 +1217,7 @@ public class SmartBox extends Application {
 									ApiModule.setpropertyValue("DELIVERY_SCANNED_SOID", String.valueOf(0));
 									ApiModule.setpropertyValue("DELIVERY_TOTAL_SOID", String.valueOf(0));
 									try {
-										LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_SUCCESS);
+										LogFile.logfile(logDate	+ "\s " +LOG_DELIVERY_PRODUCT_CODE_SUCCESS);
 
 									} catch (Exception ex) {
 										ex.printStackTrace();
@@ -1300,7 +1239,7 @@ public class SmartBox extends Application {
 									setLayout();
 								} else {
 
-									deliverySOID(sp.getSceneWidth(), sp.getSceneHeight());
+									deliverySOID();
 								}
 
 							} catch (Exception e1) {
@@ -1311,9 +1250,11 @@ public class SmartBox extends Application {
 					} else {
 						try {
 
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE);
-							
+							LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_PRODUCT_CODE_FAILURE);
+							// the following statement is used to log any messages
+							// logger.info("Entered OTP is Invalid for Delivery");
 						} catch (Exception ex) {
+							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 
@@ -1327,7 +1268,7 @@ public class SmartBox extends Application {
 
 			} else {
 				try {
-					LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE);
+					LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_PRODUCT_CODE_FAILURE);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -1342,6 +1283,9 @@ public class SmartBox extends Application {
 
 		});
 
+		enterButton.setTranslateX(-220);
+		enterButton.setTranslateY(-200);
+		enterButton.setPrefSize(90, 36);
 
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1356,9 +1300,11 @@ public class SmartBox extends Application {
 					if (isProductCodeValid) {
 						try {
 
-							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_SUCCESS);
-							
+							LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_PRODUCT_CODE_SUCCESS);
+							// the following statement is used to log any messages
+							// logger.info("Entered OTP is Invalid for Delivery");
 						} catch (Exception ex) {
+							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 						CaptureImage.captureImage();
@@ -1387,7 +1333,7 @@ public class SmartBox extends Application {
 									setLayout();
 								} else {
 
-									deliverySOID(sp.getSceneWidth(), sp.getSceneHeight());
+									deliverySOID();
 								}
 
 							} catch (Exception e1) {
@@ -1401,7 +1347,10 @@ public class SmartBox extends Application {
 						try {
 
 							LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE);
+							// the following statement is used to log any messages
+							// logger.info("Entered OTP is Invalid for Delivery");
 						} catch (Exception ex) {
+							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 
@@ -1416,6 +1365,10 @@ public class SmartBox extends Application {
 			}
 		});
 
+		scanButton.setTranslateX(-160);
+		scanButton.setTranslateY(-200);
+		scanButton.setPrefSize(60, 36);
+
 		scanButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -1423,13 +1376,17 @@ public class SmartBox extends Application {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (barcodeScanner.getBarcodetext().equals("noValue")) {
 					try {
 
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE);
+						LogFile.logfile(logDate + "\s "+LOG_DELIVERY_PRODUCT_CODE_FAILURE);
+						// the following statement is used to log any messages
+						// logger.info("Entered OTP is Invalid for Delivery");
 					} catch (Exception ex) {
+						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
 					Alert errorAlert = new Alert(AlertType.ERROR);
@@ -1439,8 +1396,11 @@ public class SmartBox extends Application {
 				} else {
 					try {
 
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE);
+						LogFile.logfile(logDate + "\s "+ LOG_DELIVERY_PRODUCT_CODE_FAILURE);
+						// the following statement is used to log any messages
+						// logger.info("Entered OTP is Invalid for Delivery");
 					} catch (Exception ex) {
+						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
 					scan.setText(barcodeScanner.getBarcodetext());
@@ -1451,106 +1411,86 @@ public class SmartBox extends Application {
 
 			}
 		});
+		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent e) {
+				setLayout();
+			}
+		});
+
+		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
+		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
+		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
+		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
+
+		forceClose.setTranslateX(300);
+		forceClose.setTranslateY(-50);
+		forceClose.setPrefSize(90, 36);
 		forceClose.setStyle("-fx-background-color: RED");
 		forceClose.setTextFill(Color.WHITE);
-		forceClose.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		
-		forceClose.setPrefWidth(getWidthPercentage(13, sp.getSceneWidth()));
-		forceClose.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));
 
 		forceClose.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent e) {
-
 				try {
 					ApiModule.ForceClose();
-					setLayout();
 				} catch (ParseException | IOException e1) {
 					e1.printStackTrace();
 				}
-
 			}
 		});
-		
-		HBox delHbox0 = new HBox();
-		delHbox0.getChildren().addAll(SOIDscantext, SOIDscan, SOIDenterButton, SOIDscanButton);
-		delHbox0.setAlignment(Pos.CENTER);
-		delHbox0.setSpacing(getWidthPercentage(2, sp.getSceneWidth()));
 
-		delHbox1 = new HBox();
-		delHbox1.getChildren().addAll(scantext, scan, enterButton, scanButton, forceClose);
-		delHbox1.setAlignment(Pos.CENTER);
-
-		vkb = new VirtualKeyboard(getWidthPercentage(4, sp.getSceneWidth()),
-				getWidthPercentage(5, sp.getSceneHeight()));
+		VirtualKeyboard vkb = new VirtualKeyboard();
 		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
-		delHbox3 = new HBox();
-		delHbox3.getChildren().add(vkb.view());
-		delHbox3.setAlignment(Pos.CENTER);
+		vkb.view().setTranslateX(20);
+		vkb.view().setTranslateY(120);
+
+		grid2.add(SOIDscantext, 0, 4);
+		grid2.add(SOIDscan, 0, 4);
+		grid2.add(SOIDenterButton, 1, 4);
+		grid2.add(SOIDscanButton, 1, 4);
+
+		grid2.add(scantext, 0, 5);
+		grid2.add(scan, 0, 5);
+		grid2.add(enterButton, 1, 5);
+		grid2.add(scanButton, 1, 5);
+		grid2.add(vkb.view(), 0, 3);
 
 
-		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox0, delHbox1, delHbox3);
-		vbox.setAlignment(Pos.CENTER);
+		StackPane root2 = new StackPane(grid2);
+		root2.getChildren().addAll(homeButton, PhoneNumber, helpButton,forceClose, deliverytotalSOIDtext, deliveryscannedSOIDtext);
 
-		delHbox2 = new HBox();
-		delHbox2.getChildren().add(vbox);
-		delHbox2.setAlignment(Pos.CENTER);
+		Scene scene = new Scene(root2, 800, 480);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8");
 
-		BorderPane.setAlignment(delHbox2, Pos.CENTER);
-		borderPane.setCenter(delHbox2);
-
-		helpButton.setTextAlignment(TextAlignment.CENTER);
-		helpButton.setStyle("-fx-background-color: Orange");
-		helpButton.setTextFill(Color.WHITE);
-
-		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
-		PhoneNumber.setFill(Color.WHITE);
-		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
-		PhoneNumber.setStroke(Color.YELLOW);
-		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
-		
-		delHbox4 = new HBox();
-		delHbox4.getChildren().addAll(PhoneNumber, helpButton);
-		BorderPane.setAlignment(delHbox4, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(delHbox4);
-
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sWidth, sHeight);
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
-
-		updateDelCompBasedOnWidth(sp);
-		updateDelCompBasedOnHeight(sp);
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
+		primaryStage.show();
 
 	}
 
 	// FulfilmentMaterial scene in javafx
 
-	public void FulfillmentMaterial(double sWidth, double sHeight) {
-
+	public void FulfillmentMaterial() {
+		
 		String LOG_FULFILLMENT_DC_NUMBER_FAILURE = ApiModule.getPropertyValue("LOG_FULFILLMENT_DC_NUMBER_FAILURE");
 		String LOG_FULFILLMENT_DC_NUMBER_SUCCESS = ApiModule.getPropertyValue("LOG_FULFILLMENT_DC_NUMBER_SUCCESS");
 
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
-		sp.setSceneName(S2);
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
 
-		BorderPane borderPane = new BorderPane();
-
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
 		homeButton.setStyle("-fx-background-color: Orange");
-		HBox tHbox = new HBox();
-		tHbox.getChildren().add(homeButton);
-		tHbox.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(homeButton);
-		scenCapWidth = sWidth;
-		scenCapHeight = sHeight;
 
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1560,13 +1500,24 @@ public class SmartBox extends Application {
 			}
 		});
 
-		scantext = new Label("DC # :");
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
+		helpButton.setStyle("-fx-background-color: Orange");
+		helpButton.setTextFill(Color.WHITE);
+
+		scantext = new Label("Enter/Scan DC Number:");
+		scantext.setTranslateX(100);
+		scantext.setTranslateY(-200);
 		scantext.setTextFill(Color.WHITE);
+		scantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 
 		scan = new TextField();
-		scan.requestFocus();
-		scan.setFocusTraversable(Boolean.TRUE);
 		scan.setPromptText("Enter/Scan DC Number:");
+		scan.setMaxWidth(190);
+		scan.setTranslateX(330);
+		scan.setTranslateY(-200);
 		scan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 
@@ -1585,7 +1536,7 @@ public class SmartBox extends Application {
 					}
 					if (status.equalsIgnoreCase("FAILURE")) {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_FAILURE);
+							LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_DC_NUMBER_FAILURE);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -1596,18 +1547,22 @@ public class SmartBox extends Application {
 						errorAlert.showAndWait();
 					} else {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_SUCCESS);
+							LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_DC_NUMBER_SUCCESS);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
 						}
 
-						fulfillmentOtpLayout(dcNumber, sp.getSceneWidth(), sp.getSceneHeight());
+						fulfillmentOtpLayout(dcNumber);
 					}
 				}
 
 			}
 		});
+
+		enterButton.setTranslateX(-210);
+		enterButton.setTranslateY(-200);
+		enterButton.setPrefSize(100, 36);
 
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1626,7 +1581,7 @@ public class SmartBox extends Application {
 					}
 					if (status.equalsIgnoreCase("FAILURE")) {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_FAILURE);
+							LogFile.logfile(logDate + "\s "+LOG_FULFILLMENT_DC_NUMBER_FAILURE);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -1638,18 +1593,22 @@ public class SmartBox extends Application {
 						errorAlert.showAndWait();
 					} else {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_SUCCESS);
+							LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_DC_NUMBER_SUCCESS);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
 						}
 
-						fulfillmentOtpLayout(dcNumber, sp.getSceneWidth(), sp.getSceneHeight());
+						fulfillmentOtpLayout(dcNumber);
 					}
 
 				}
 			}
 		});
+
+		scanButton.setTranslateX(-150);
+		scanButton.setTranslateY(-200);
+		scanButton.setPrefSize(60, 36);
 
 		scanButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1658,11 +1617,12 @@ public class SmartBox extends Application {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (barcodeScanner.getBarcodetext().equals("noValue")) {
 					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_FAILURE);
+						LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_DC_NUMBER_FAILURE);
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -1673,7 +1633,7 @@ public class SmartBox extends Application {
 					errorAlert.showAndWait();
 				} else {
 					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_SUCCESS);
+						LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_DC_NUMBER_SUCCESS);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -1684,49 +1644,43 @@ public class SmartBox extends Application {
 				file.delete();
 			}
 		});
+		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
-		delHbox1 = new HBox();
-		delHbox1.getChildren().addAll(scantext, scan, enterButton, scanButton);
-		delHbox1.setAlignment(Pos.CENTER);
-		vkb = new VirtualKeyboard(getWidthPercentage(4, sp.getSceneWidth()),
-				getWidthPercentage(5, sp.getSceneHeight()));
-		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
-
-		delHbox3 = new HBox();
-		delHbox3.getChildren().add(vkb.view());
-		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox1, delHbox3);
-		vbox.setAlignment(Pos.CENTER);
-
-		delHbox2 = new HBox();
-		delHbox2.getChildren().add(vbox);
-		delHbox2.setAlignment(Pos.CENTER);
-
-		BorderPane.setAlignment(delHbox2, Pos.CENTER);
-		borderPane.setCenter(delHbox2);
-		helpButton.setTextAlignment(TextAlignment.CENTER);
-		helpButton.setStyle("-fx-background-color: Orange");
-		helpButton.setTextFill(Color.WHITE);
+			@Override
+			public void handle(ActionEvent e) {
+				setLayout();
+			}
+		});
 
 		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
 		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
 		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
-		PhoneNumber.setStroke(Color.YELLOW);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
 		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
 
-		delHbox4 = new HBox();
-		delHbox4.getChildren().addAll(PhoneNumber, helpButton);
-		BorderPane.setAlignment(delHbox4, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(delHbox4);
+		VirtualKeyboard vkb = new VirtualKeyboard();
+		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
+		vkb.view().setTranslateX(25);
+		vkb.view().setTranslateY(85);
 
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sWidth, sHeight);
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
-		updateDelCompBasedOnWidth(sp);
-		updateDelCompBasedOnHeight(sp);
-		primaryStage.setResizable(false);
+		grid2.add(scantext, 0, 5);
+		grid2.add(scan, 0, 5);
+		grid2.add(enterButton, 1, 5);
+		grid2.add(scanButton, 1, 5);
+		grid2.add(vkb.view(), 0, 3);
+
+		StackPane root2 = new StackPane(grid2);
+		root2.getChildren().addAll(homeButton, PhoneNumber, helpButton);
+
+		Scene scene = new Scene(root2, 800, 480);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8");
+
 		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
+		primaryStage.show();
 
 	}
 
@@ -1748,9 +1702,12 @@ public class SmartBox extends Application {
 			seconds2--;
 		}
 
+		// defaultTime.setMinutes(minutes);
+		// defaultTime.setSeconds(seconds);
+		// timer.setText(defaultTime.toString());
 	}
 
-	public void fulfillmentOtpLayout(String dcNumber, double sWidth, double sHeight) {
+	public void fulfillmentOtpLayout(String dcNumber) {
 
 		timeline2 = new Timeline(new KeyFrame(Duration.seconds(1), event2 -> {
 			countDown2();
@@ -1758,20 +1715,21 @@ public class SmartBox extends Application {
 		timeline2.setCycleCount(Timeline.INDEFINITE);
 		timeline2.play();
 
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
-
-		BorderPane borderPane = new BorderPane();
+		timerLabel2.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		timerLabel2.setTranslateX(250);
+		timerLabel2.setTranslateY(-60);
 		timerLabel2.setTextFill(Color.WHITE);
 
-		homeButton.setTextAlignment(TextAlignment.CENTER);
-		homeButton.setStyle("-fx-background-color: Orange");
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
 
-		thBox1 = new HBox();
-		thBox1.getChildren().addAll(homeButton, timerLabel);
-		thBox1.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(thBox1);
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
+		homeButton.setStyle("-fx-background-color: Orange");
+		homeButton.setTextFill(Color.WHITE);
 
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1784,26 +1742,44 @@ public class SmartBox extends Application {
 			}
 		});
 
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
 		helpButton.setStyle("-fx-background-color: Orange");
 		helpButton.setTextFill(Color.WHITE);
-		otpHbox1 = new HBox();
 
-		otpText = new Label("Enter your OTP!");
+		otpText = new Label("\s Enter your OTP!");
+		otpText.setTranslateX(10);
+		otpText.setTranslateY(-100);
 		otpText.setTextFill(Color.WHITE);
+		otpText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
 
 		otpScan = new TextField();
 		otpScan.setPromptText("Enter OTP");
+		otpScan.setTranslateX(10);
+		otpScan.setTranslateY(-60);
+		otpScan.setMaxWidth(200);
 
-		clearText = new Button("X");
+		otpScan.setStyle(
+				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
+
+		Button clearText = new Button("X");
+		clearText.setTranslateX(78);
+		clearText.setTranslateY(-60);
 		clearText.setStyle("-fx-background-color: Orange");
 		clearText.setTextFill(Color.WHITE);
+		clearText.setPrefSize(63, 34);
+		clearText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
 		clearText.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
 			public void handle(ActionEvent event) {
 				try {
 					otpScan.setText(otpScan.getText().substring(0, otpScan.getText().length() - 1));
 				} catch (Exception e) {
 					Alert errorAlert1 = new Alert(AlertType.CONFIRMATION);
+
 					errorAlert1.setHeaderText("Admin Msg: No Data");
 					errorAlert1.setContentText("Textfield is empty");
 					errorAlert1.showAndWait();
@@ -1812,9 +1788,9 @@ public class SmartBox extends Application {
 			}
 		});
 
-		otpScan.setStyle(
-				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
-
+		enterButton.setTranslateX(160);
+		enterButton.setTranslateY(-60);
+		enterButton.setPrefSize(60, 36);
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -1832,19 +1808,23 @@ public class SmartBox extends Application {
 			}
 		});
 
-		otpHbox1.setAlignment(Pos.CENTER);
-		otpHbox1.getChildren().addAll(otpScan, clearText, enterButton);
+		Numpad np = new Numpad();
+		np.view().setStyle(" -fx-border-radius: 5;");
+		np.view().setTranslateX(10);
+		np.view().setTranslateY(80);
 
-		Numpad np = new Numpad(getWidthPercentage(8, sp.getSceneWidth()), getWidthPercentage(4, sp.getSceneWidth()));
-		np.view().setStyle("-fx-border-radius: 5;");
+		grid2.add(np.view(), 0, 3);
 
-		otpHbox2 = new HBox();
-		otpHbox2.setAlignment(Pos.CENTER);
+		HBox hbox = new HBox(520);
+		hbox.setTranslateX(50);
+		hbox.setTranslateY(380);
 
-		backButton = new Button();
+		Button backButton = new Button();
+
 		backButton.setText("<- Back");
-		backButton.setStyle("-fx-background-color: Orange");
+		backButton.setStyle("-fx-background-color: Red");
 		backButton.setTextFill(Color.WHITE);
+		backButton.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 
 		backButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1853,15 +1833,16 @@ public class SmartBox extends Application {
 				minutes2 = 14;
 				seconds2 = 59;
 				timeline2.stop();
-				FulfillmentMaterial(sp.getSceneWidth(), sp.getSceneHeight());
+				FulfillmentMaterial();
 			}
 		});
 
-		resendOtp = new Button();
+		Button resendOtp = new Button();
 
 		resendOtp.setText("Resend Otp");
 		resendOtp.setStyle("-fx-background-color: Green");
 		resendOtp.setTextFill(Color.WHITE);
+		resendOtp.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 
 		resendOtp.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1888,40 +1869,32 @@ public class SmartBox extends Application {
 		});
 
 		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
-		PhoneNumber.setFill(Color.YELLOW);
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
+		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
 		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
 		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
 
-		otpHbox2.getChildren().addAll(backButton, resendOtp);
-		otpVBox1 = new VBox();
-		otpVBox1.getChildren().addAll(otpText, otpHbox1, np.view(), otpHbox2);
-		otpVBox1.setAlignment(Pos.CENTER);
+		hbox.getChildren().addAll(backButton, resendOtp);
 
-		BorderPane.setAlignment(otpVBox1, Pos.TOP_CENTER);
-		borderPane.setCenter(otpVBox1);
-
-		otpHbox3 = new HBox();
-		otpHbox3.getChildren().addAll(PhoneNumber, helpButton);
-		otpHbox3.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(otpHbox3, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(otpHbox3);
-		updateOtpCompBasedOnWidth(sp);
-		updateOtpCompBasedOnHeight(sp);
-
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sp.getSceneWidth(), sp.getSceneHeight());
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
-		primaryStage.setResizable(false);
+		StackPane root2 = new StackPane(grid2);
+		Scene scene = new Scene(root2, 800, 480);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8;");
+		root2.getChildren().addAll(otpText, otpScan, clearText, homeButton, enterButton, PhoneNumber, helpButton, hbox,
+				timerLabel);
 		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
+		primaryStage.show();
 
 	}
 
 	private void fulfillmentCheckOtp(String dcNumber, String otpNumber) {
-
+		
 		String LOG_FULFILLMENT_OTP_FAILURE = ApiModule.getPropertyValue("LOG_FULFILLMENT_OTP_FAILURE");
 		String LOG_FULFILLMENT_OTP_SUCCESS = ApiModule.getPropertyValue("LOG_FULFILLMENT_OTP_SUCCESS");
-
+		
 		JSONObject resultjson = null;
 		try {
 			String result = ApiModule.RefillValidateOTP(dcNumber, otpNumber);
@@ -1935,7 +1908,7 @@ public class SmartBox extends Application {
 			}
 			if (status.equals("FAILURE")) {
 				try {
-					LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_OTP_FAILURE);
+					LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_OTP_FAILURE);
 
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -1960,11 +1933,11 @@ public class SmartBox extends Application {
 					ApiModule.setpropertyValue("ORDER_TYPE", "REFILL");
 					int scanSize = ApiModule.getScanSize(resultjson.toString());
 					ApiModule.setpropertyValue("FULFILLMENT_TOTAL_SOID", String.valueOf(scanSize));
-					fulfillmentSOID(sp.getSceneWidth(), sp.getSceneHeight());
+					fulfillmentSOID();
 
 				} catch (Exception e) {
 					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_OTP_FAILURE);
+						LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_OTP_FAILURE);
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -1984,31 +1957,25 @@ public class SmartBox extends Application {
 
 	}
 
-	public void fulfillmentSOID(double sWidth, double sHeight) {
-
+	public void fulfillmentSOID() {
+		
 		String LOG_FULFILLMENT_SOID_NUMBER_FAILURE = ApiModule.getPropertyValue("LOG_FULFILLMENT_SOID_NUMBER_FAILURE");
 		String LOG_FULFILLMENT_SOID_NUMBER_SUCCESS = ApiModule.getPropertyValue("LOG_FULFILLMENT_SOID_NUMBER_SUCCESS");
-
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
 
 		String fulfillmenttotalSOID = "";
 		String fulfillmentscannedSOID = "";
 		Label fulfillmentscannedSOIDtext;
 		Label fulfillmenttotalSOIDtext;
 
-		BorderPane borderPane = new BorderPane();
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
 
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
 		homeButton.setStyle("-fx-background-color: Orange");
-
-		HBox tHbox = new HBox();
-		tHbox.getChildren().add(homeButton);
-		tHbox.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(homeButton);
-		scenCapWidth = sWidth;
-		scenCapHeight = sHeight;
 
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -2018,35 +1985,44 @@ public class SmartBox extends Application {
 			}
 		});
 
-		VBox SOIDvbox = new VBox();
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
+		helpButton.setStyle("-fx-background-color: Orange");
+		helpButton.setTextFill(Color.WHITE);
+
 		fulfillmenttotalSOID = ApiModule.getPropertyValue("FULFILLMENT_TOTAL_SOID");
 		fulfillmentscannedSOID = ApiModule.getPropertyValue("FULFILLMENT_SCANNED_SOID");
 
 		fulfillmenttotalSOIDtext = new Label("Total SOID: " + fulfillmenttotalSOID);
-		fulfillmenttotalSOIDtext.setTextFill(Color.WHITE);
-		fulfillmenttotalSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		fulfillmenttotalSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
 
 		fulfillmentscannedSOIDtext = new Label("Scanned SOID: " + fulfillmentscannedSOID);
+
+		fulfillmenttotalSOIDtext.setMaxWidth(400);
+		fulfillmenttotalSOIDtext.setTranslateX(280);
+		fulfillmenttotalSOIDtext.setTranslateY(-190);
+		fulfillmenttotalSOIDtext.setTextFill(Color.WHITE);
+		fulfillmenttotalSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
+
+		fulfillmentscannedSOIDtext.setMaxWidth(400);
+		fulfillmentscannedSOIDtext.setTranslateX(280);
+		fulfillmentscannedSOIDtext.setTranslateY(-170);
 		fulfillmentscannedSOIDtext.setTextFill(Color.WHITE);
-		fulfillmentscannedSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		fulfillmentscannedSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
+		fulfillmentscannedSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
 
-		SOIDvbox.getChildren().addAll(fulfillmenttotalSOIDtext, fulfillmentscannedSOIDtext);
-		SOIDvbox.setAlignment(Pos.CENTER);
-
-		BorderPane.setAlignment(SOIDvbox, Pos.TOP_RIGHT);
-		borderPane.setTop(SOIDvbox);
-
-		scantext = new Label("SOID # :");
+		scantext = new Label("Enter/Scan SOID Number:");
+		scantext.setTranslateX(70);
+		scantext.setTranslateY(-230);
 		scantext.setTextFill(Color.WHITE);
+		scantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 
 		scan = new TextField();
 		scan.setPromptText("Enter/Scan SOID Number:");
-		scan.requestFocus();
-		scan.setFocusTraversable(Boolean.TRUE);
+		scan.setMaxWidth(190);
+		scan.setTranslateX(330);
+		scan.setTranslateY(-230);
+
 		scan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 
@@ -2075,7 +2051,8 @@ public class SmartBox extends Application {
 					boolean isSoidValid = ApiModule.validDC(jsonArray, fulfillmentSoidNumber);
 					if (isSoidValid) {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
+							LogFile.logfile(
+									logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -2095,10 +2072,11 @@ public class SmartBox extends Application {
 							e1.printStackTrace();
 						}
 
-						fulfillmentProductCode(fulfillmentSoidNumber, sp.getSceneWidth(), sp.getSceneHeight());
+						fulfillmentProductCode(fulfillmentSoidNumber);
 					} else {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_FAILURE);
+							LogFile.logfile(
+									logDate + "\s "+ LOG_FULFILLMENT_SOID_NUMBER_FAILURE);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -2113,6 +2091,10 @@ public class SmartBox extends Application {
 				}
 			}
 		});
+
+		enterButton.setTranslateX(-220);
+		enterButton.setTranslateY(-230);
+		enterButton.setPrefSize(90, 36);
 
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -2140,7 +2122,8 @@ public class SmartBox extends Application {
 					boolean isSoidValid = ApiModule.validDC(jsonArray, fulfillmentSoidNumber);
 					if (isSoidValid) {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
+							LogFile.logfile(
+									logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -2161,7 +2144,7 @@ public class SmartBox extends Application {
 							e1.printStackTrace();
 						}
 
-						fulfillmentProductCode(fulfillmentSoidNumber, sp.getSceneWidth(), sp.getSceneHeight());
+						fulfillmentProductCode(fulfillmentSoidNumber);
 					} else {
 						try {
 							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_FAILURE);
@@ -2179,6 +2162,10 @@ public class SmartBox extends Application {
 			}
 		});
 
+		scanButton.setTranslateX(-160);
+		scanButton.setTranslateY(-230);
+		scanButton.setPrefSize(60, 36);
+
 		scanButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -2186,11 +2173,12 @@ public class SmartBox extends Application {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (barcodeScanner.getBarcodetext().equals("noValue")) {
 					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_FAILURE);
+						LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_SOID_NUMBER_FAILURE);
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -2201,7 +2189,7 @@ public class SmartBox extends Application {
 					errorAlert.showAndWait();
 				} else {
 					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
+						LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -2214,82 +2202,68 @@ public class SmartBox extends Application {
 
 			}
 		});
+		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
-		delHbox1 = new HBox();
-		delHbox1.getChildren().addAll(scantext, scan, enterButton, scanButton);
-		delHbox1.setAlignment(Pos.CENTER);
-
-		vkb = new VirtualKeyboard(getWidthPercentage(4, sp.getSceneWidth()),
-				getWidthPercentage(5, sp.getSceneHeight()));
-		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
-		delHbox3 = new HBox();
-		delHbox3.getChildren().add(vkb.view());
-
-		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox1, delHbox3);
-		vbox.setAlignment(Pos.CENTER);
-
-		delHbox2 = new HBox();
-		delHbox2.getChildren().add(vbox);
-		delHbox2.setAlignment(Pos.CENTER);
-
-		BorderPane.setAlignment(delHbox2, Pos.CENTER);
-		borderPane.setCenter(delHbox2);
-
-		helpButton.setTextAlignment(TextAlignment.CENTER);
-		helpButton.setStyle("-fx-background-color: Orange");
-		helpButton.setTextFill(Color.WHITE);
+			@Override
+			public void handle(ActionEvent e) {
+				setLayout();
+			}
+		});
 
 		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
 		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
 		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
-		PhoneNumber.setStroke(Color.YELLOW);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
 		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
 
-		delHbox4 = new HBox();
-		delHbox4.getChildren().addAll(PhoneNumber, helpButton);
-		BorderPane.setAlignment(delHbox4, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(delHbox4);
+		VirtualKeyboard vkb = new VirtualKeyboard();
+		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
+		vkb.view().setTranslateX(25);
+		vkb.view().setTranslateY(85);
 
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sWidth, sHeight);
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
+		grid2.add(scantext, 0, 4);
+		grid2.add(scan, 0, 4);
+		grid2.add(enterButton, 1, 4);
+		grid2.add(scanButton, 1, 4);
 
-		updateDelCompBasedOnWidth(sp);
-		updateDelCompBasedOnHeight(sp);
+		grid2.add(vkb.view(), 0, 3);
+
+
+		StackPane root2 = new StackPane(grid2);
+		root2.getChildren().addAll(homeButton, PhoneNumber, helpButton, fulfillmenttotalSOIDtext, fulfillmentscannedSOIDtext);
+
+		Scene scene = new Scene(root2, 800, 480);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8");
+
+		// scene.getStylesheets().add(this.getClass().getResource("style.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
+		primaryStage.show();
 
 	}
 
-	public void fulfillmentProductCode(String fulSoidNumber, double sWidth, double sHeight) {
-
-		String LOG_FULFILLMENT_PRODUCT_CODE_FAILURE = ApiModule
-				.getPropertyValue("LOG_FULFILLMENT_PRODUCT_CODE_FAILURE");
-		String LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS = ApiModule
-				.getPropertyValue("LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS");
-
-		sp.setSceneWidth(sWidth);
-		sp.setSceneHeight(sHeight);
-
+	public void fulfillmentProductCode(String fulSoidNumber) {
+		//System.out.println("en");
+		String LOG_FULFILLMENT_PRODUCT_CODE_FAILURE = ApiModule.getPropertyValue("LOG_FULFILLMENT_PRODUCT_CODE_FAILURE");
+		String LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS = ApiModule.getPropertyValue("LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS");
+		
 		String fulfillmenttotalSOID = "";
 		String fulfillmentscannedSOID = "";
 		Label fulfillmentscannedSOIDtext;
 		Label fulfillmenttotalSOIDtext;
 
-		BorderPane borderPane = new BorderPane();
+		GridPane grid2 = new GridPane();
+		grid2.setAlignment(Pos.CENTER);
+		grid2.setHgap(10);
+		grid2.setVgap(10);
 
+		homeButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		homeButton.setTextAlignment(TextAlignment.CENTER);
+		homeButton.setTranslateY(-180);
 		homeButton.setStyle("-fx-background-color: Orange");
-
-		HBox tHbox = new HBox();
-		tHbox.getChildren().add(homeButton);
-		tHbox.setAlignment(Pos.CENTER);
-		BorderPane.setAlignment(homeButton, Pos.TOP_CENTER);
-		borderPane.setTop(homeButton);
-		scenCapWidth = sWidth;
-		scenCapHeight = sHeight;
 
 		homeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -2299,67 +2273,72 @@ public class SmartBox extends Application {
 			}
 		});
 
+		helpButton.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 20));
+		helpButton.setTextAlignment(TextAlignment.CENTER);
+		helpButton.setTranslateY(210);
+		helpButton.setTranslateX(340);
+		helpButton.setStyle("-fx-background-color: Orange");
+		helpButton.setTextFill(Color.WHITE);
+
 		fulfillmenttotalSOID = ApiModule.getPropertyValue("FULFILLMENT_TOTAL_SOID");
 		fulfillmentscannedSOID = ApiModule.getPropertyValue("FULFILLMENT_SCANNED_SOID");
 
-		VBox SOIDvbox = new VBox();
 		fulfillmenttotalSOIDtext = new Label("Total SOID: " + fulfillmenttotalSOID);
-		fulfillmenttotalSOIDtext.setTextFill(Color.WHITE);
-		fulfillmenttotalSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		fulfillmenttotalSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
 
 		fulfillmentscannedSOIDtext = new Label("Scanned SOID: " + fulfillmentscannedSOID);
+
+		fulfillmenttotalSOIDtext.setMaxWidth(400);
+		fulfillmenttotalSOIDtext.setTranslateX(280);
+		fulfillmenttotalSOIDtext.setTranslateY(-190);
+		fulfillmenttotalSOIDtext.setTextFill(Color.WHITE);
+		fulfillmenttotalSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
+
+		fulfillmentscannedSOIDtext.setMaxWidth(400);
+		fulfillmentscannedSOIDtext.setTranslateX(280);
+		fulfillmentscannedSOIDtext.setTranslateY(-170);
 		fulfillmentscannedSOIDtext.setTextFill(Color.WHITE);
-		fulfillmentscannedSOIDtext.setTranslateX(getWidthPercentage(14, sp.getSceneWidth()));
-		fulfillmentscannedSOIDtext.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR,
-				getWidthPercentage(3, sp.getSceneHeight())));
+		fulfillmentscannedSOIDtext.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 14));
 
-		SOIDvbox.getChildren().addAll(fulfillmenttotalSOIDtext, fulfillmentscannedSOIDtext);
-		SOIDvbox.setAlignment(Pos.CENTER);
-
-		BorderPane.setAlignment(SOIDvbox, Pos.TOP_RIGHT);
-		borderPane.setTop(SOIDvbox);
-
-		Label fullSOIDscantext = new Label("SOID # :");
+		Label fullSOIDscantext = new Label("Enter/Scan SOID Number:");
+		fullSOIDscantext.setMaxWidth(400);
+		fullSOIDscantext.setTranslateX(70);
+		fullSOIDscantext.setTranslateY(-230);
 		fullSOIDscantext.setTextFill(Color.WHITE);
 		fullSOIDscantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
-		fullSOIDscantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(2.5, sp.getSceneWidth())));
-		
 
 		TextField fullSOIDscan = new TextField();
 		fullSOIDscan.setPromptText("Enter/Scan SOID Number:");
-		fullSOIDscan.setPrefWidth(getWidthPercentage(21, sp.getSceneWidth()));
-		fullSOIDscan.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1, sp.getSceneWidth())));
-		
+		fullSOIDscan.setMaxWidth(190);
+		fullSOIDscan.setTranslateX(330);
+		fullSOIDscan.setTranslateY(-230);
 		fullSOIDscan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 		fullSOIDscan.setText(fulSoidNumber);
 
 		Button fullSOIDenterButton = new Button("Enter");
-		fullSOIDenterButton.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		fullSOIDenterButton.setPrefWidth(getWidthPercentage(10, sp.getSceneWidth()));
-		fullSOIDenterButton.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));	
+		fullSOIDenterButton.setTranslateX(-220);
+		fullSOIDenterButton.setTranslateY(-230);
+		fullSOIDenterButton.setPrefSize(90, 36);
 		fullSOIDenterButton.setDisable(true);
-	
 
 		Button fullSOIDscanButton = new Button("Scan");
+		fullSOIDscanButton.setTranslateX(-160);
+		fullSOIDscanButton.setTranslateY(-230);
+		fullSOIDscanButton.setPrefSize(60, 36);
 		fullSOIDscanButton.setDisable(true);
-		fullSOIDscanButton.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));
-		fullSOIDscanButton.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		fullSOIDscanButton.setPrefWidth(getWidthPercentage(10, sp.getSceneWidth()));
 
-
-		scantext = new Label("PRODUCT CODE # :");
+		scantext = new Label("Enter/Scan Product Code:");
+		scantext.setMaxWidth(400);
+		scantext.setTranslateX(70);
+		scantext.setTranslateY(-200);
 		scantext.setTextFill(Color.WHITE);
+		scantext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, fontSize));
 
 		scan = new TextField();
-		scan.setPromptText("Enter/Scan SOID Number:");
-		scan.requestFocus();
-		scan.setFocusTraversable(Boolean.TRUE);
+		scan.setPromptText("Enter/Scan Product Code:");
+		scan.setMaxWidth(190);
+		scan.setTranslateX(330);
+		scan.setTranslateY(-200);
 		scan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 
@@ -2372,7 +2351,8 @@ public class SmartBox extends Application {
 					boolean isProductCodeValid = ApiModule.validProductCode(jsonArray, fulSoidNumber, productCode);
 					if (isProductCodeValid) {
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
+							LogFile.logfile(
+									logDate + "\s "+ LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -2384,7 +2364,9 @@ public class SmartBox extends Application {
 						LocalDateTime lock_open_time = LocalDateTime.now();
 						DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("ddMMyyyy HH:mm:ss");
 						String formattedlockopenDate = lock_open_time.format(myFormatObj);
+						//System.out.println("cv");
 						CaptureImage.captureImage();
+						//System.out.println("cve");
 						if (Validations.isValidConfirmMessage()) {
 							LocalDateTime lock_close_time = LocalDateTime.now();
 							DateTimeFormatter myFormatObj1 = DateTimeFormatter.ofPattern("ddMMyyyy HH:mm:ss");
@@ -2418,7 +2400,8 @@ public class SmartBox extends Application {
 									ApiModule.setpropertyValue("FULFILLMENT_TOTAL_SOID", String.valueOf(0));
 
 									try {
-										LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
+										LogFile.logfile(logDate
+												+ "\s "+ LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
 
 									} catch (Exception ex) {
 										ex.printStackTrace();
@@ -2439,12 +2422,13 @@ public class SmartBox extends Application {
 									setLayout();
 								} else {
 									try {
-										LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
+										LogFile.logfile(logDate
+												+ "\s "+ LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
 
 									} catch (Exception ex) {
 										ex.printStackTrace();
 									}
-									fulfillmentSOID(sp.getSceneWidth(), sp.getSceneHeight());
+									fulfillmentSOID();
 								}
 
 							} catch (Exception e1) {
@@ -2458,7 +2442,7 @@ public class SmartBox extends Application {
 					} else {
 
 						try {
-							LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_FAILURE);
+							LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_PRODUCT_CODE_FAILURE);
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -2488,38 +2472,50 @@ public class SmartBox extends Application {
 
 		});
 
+		enterButton.setTranslateX(-220);
+		enterButton.setTranslateY(-200);
+		enterButton.setPrefSize(90, 36);
+
 		enterButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent e) {
+				System.out.println("en");
 				if (scan.getText().length() <= 20) {
 					productCode = scan.getText();
 					JSONObject jsonObject = new JSONObject(ApiModule.getPropertyValue("OTP_DATA"));
 					JSONArray jsonArray = jsonObject.getJSONArray("data");
 					boolean isProductCodeValid = ApiModule.validProductCode(jsonArray, fulSoidNumber, productCode);
 					if (isProductCodeValid) {
+					//	System.out.println("cv");
 						CaptureImage.captureImage();
+						//System.out.println("cve");
 						if (Validations.isValidConfirmMessage()) {
+						//	System.out.println("here");
 							String lockname = ApiModule.getLockerName(jsonArray, fulSoidNumber);
 							LockerOpen.OpenLocker(lockname);
 							Date curr_date = new java.util.Date(System.currentTimeMillis());
 							try {
 
 								String fulillmentscannedSOID = ApiModule.getPropertyValue("FULFILLMENT_SCANNED_SOID");
-
+								
 								int fulfillmentscannedSOIDint = Integer.parseInt(fulillmentscannedSOID);
+							//	System.out.println(fulfillmentscannedSOIDint);
 								fulfillmentscannedSOIDint++;
 								ApiModule.setpropertyValue("FULFILLMENT_SCANNED_SOID",
 										String.valueOf(fulfillmentscannedSOIDint));
 								String fulillmenttotalSOID = ApiModule.getPropertyValue("FULFILLMENT_TOTAL_SOID");
 								int fulFillmenttotalSOIDint = Integer.parseInt(fulillmenttotalSOID);
-
+							//	System.out.println(fulfillmentscannedSOIDint);
+								//System.out.println(fulFillmenttotalSOIDint);
+								
 								if (fulfillmentscannedSOIDint == fulFillmenttotalSOIDint) {
 									ApiModule.setpropertyValue("FULFILLMENT_SCANNED_SOID", String.valueOf(0));
 									ApiModule.setpropertyValue("FULFILLMENT_TOTAL_SOID", String.valueOf(0));
 
 									try {
-										LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
+										LogFile.logfile(logDate
+												+ "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
 
 									} catch (Exception ex) {
 										ex.printStackTrace();
@@ -2532,12 +2528,13 @@ public class SmartBox extends Application {
 									setLayout();
 								} else {
 									try {
-										LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
+										LogFile.logfile(logDate
+												+ "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
 
 									} catch (Exception ex) {
 										ex.printStackTrace();
 									}
-									fulfillmentSOID(sp.getSceneWidth(), sp.getSceneHeight());
+									fulfillmentSOID();
 								}
 
 							} catch (Exception e1) {
@@ -2566,6 +2563,10 @@ public class SmartBox extends Application {
 			}
 		});
 
+		scanButton.setTranslateX(-160);
+		scanButton.setTranslateY(-200);
+		scanButton.setPrefSize(60, 36);
+
 		scanButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -2573,11 +2574,12 @@ public class SmartBox extends Application {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (barcodeScanner.getBarcodetext().equals("noValue")) {
 					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_FAILURE);
+						LogFile.logfile(logDate + "\s "+ LOG_FULFILLMENT_PRODUCT_CODE_FAILURE);
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -2596,12 +2598,28 @@ public class SmartBox extends Application {
 			}
 		});
 
+		homeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent e) {
+				setLayout();
+			}
+		});
+
+		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
+		Text PhoneNumber = new Text("Contact : " + phoneNumber);
+		PhoneNumber.setFill(Color.WHITE);
+		PhoneNumber.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 22));
+		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
+		PhoneNumber.setTranslateY(205);
+		PhoneNumber.setTranslateX(-220);
+		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
+
+		forceClose.setTranslateX(300);
+		forceClose.setTranslateY(-50);
+		forceClose.setPrefSize(90, 36);
 		forceClose.setStyle("-fx-background-color: RED");
 		forceClose.setTextFill(Color.WHITE);
-		forceClose.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, getWidthPercentage(1.5, sp.getSceneWidth())));
-		
-		forceClose.setPrefWidth(getWidthPercentage(13, sp.getSceneWidth()));
-		forceClose.setPrefHeight(getWidthPercentage(3, sp.getSceneWidth()));
 
 		forceClose.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -2610,65 +2628,39 @@ public class SmartBox extends Application {
 
 				try {
 					ApiModule.ForceClose();
-					setLayout();
 				} catch (ParseException | IOException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
 			}
 		});
 
-		HBox delHbox0 = new HBox();
-		delHbox0.getChildren().addAll(fullSOIDscantext, fullSOIDscan, fullSOIDenterButton, fullSOIDscanButton);
-		delHbox0.setAlignment(Pos.CENTER);
-		delHbox0.setSpacing(getWidthPercentage(2, sp.getSceneWidth()));
-
-		delHbox1 = new HBox();
-		delHbox1.getChildren().addAll(scantext, scan, enterButton, scanButton, forceClose);
-		delHbox1.setAlignment(Pos.CENTER);
-
-		vkb = new VirtualKeyboard(getWidthPercentage(4, sp.getSceneWidth()),
-				getWidthPercentage(5, sp.getSceneHeight()));
+		VirtualKeyboard vkb = new VirtualKeyboard();
 		vkb.view().setStyle("-fx-border-color: darkblue; -fx-border-radius: 5;");
-		delHbox3 = new HBox();
-		delHbox3.setAlignment(Pos.CENTER);
-		delHbox3.getChildren().add(vkb.view());
+		vkb.view().setTranslateX(20);
+		vkb.view().setTranslateY(120);
 
-		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox0, delHbox1, delHbox3);
-		vbox.setAlignment(Pos.CENTER);
+		grid2.add(scantext, 0, 5);
+		grid2.add(scan, 0, 5);
+		grid2.add(enterButton, 1, 5);
+		grid2.add(scanButton, 1, 5);
+		grid2.add(vkb.view(), 0, 3);
 
-		delHbox2 = new HBox();
-		delHbox2.getChildren().add(vbox);
-		delHbox2.setAlignment(Pos.CENTER);
+		grid2.add(fullSOIDscantext, 0, 4);
+		grid2.add(fullSOIDscan, 0, 4);
+		grid2.add(fullSOIDenterButton, 1, 4);
+		grid2.add(fullSOIDscanButton, 1, 4);
 
-		BorderPane.setAlignment(delHbox2, Pos.CENTER);
-		borderPane.setCenter(delHbox2);
+		StackPane root2 = new StackPane(grid2);
+		root2.getChildren().addAll(homeButton, PhoneNumber, helpButton, fulfillmenttotalSOIDtext,fulfillmentscannedSOIDtext,forceClose);
 
-		helpButton.setTextAlignment(TextAlignment.CENTER);
-		helpButton.setStyle("-fx-background-color: Orange");
-		helpButton.setTextFill(Color.WHITE);
+		Scene scene = new Scene(root2, 800, 480);
+		root2.setStyle("-fx-background-image: url(\"blue.jpg\"); -fx-background-repeat:no-repeat;-fx-opacity: 0.8");
 
-		String phoneNumber = ApiModule.getPropertyValue("PhoneNumber");
-		PhoneNumber = new Text("Contact : " + phoneNumber);
-		PhoneNumber.setFill(Color.WHITE);
-		PhoneNumber.setTextAlignment(TextAlignment.CENTER);
-		PhoneNumber.setStroke(Color.YELLOW);
-		PhoneNumber.setStyle("-fx-highlight-fill: White; -fx-highlight-text-fill: BLACK;");
-
-		delHbox4 = new HBox();
-		delHbox4.getChildren().addAll(PhoneNumber, helpButton);
-		BorderPane.setAlignment(delHbox4, Pos.BOTTOM_CENTER);
-		borderPane.setBottom(delHbox4);
-
-		StackPane root2 = new StackPane(borderPane);
-		Scene scene = new Scene(root2, sWidth, sHeight);
-		root2.setStyle("-fx-background-image: url(\"Picture4.png\"); -fx-background-size: cover;-fx-opacity: 0.8;");
-
-		updateDelCompBasedOnWidth(sp);
-		updateDelCompBasedOnHeight(sp);
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
+		primaryStage.show();
 
 	}
 
