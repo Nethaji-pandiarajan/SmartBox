@@ -29,8 +29,8 @@ import javafx.scene.text.FontWeight;
 
 public class VirtualKeyboard {
 	private final VBox root;
-	private double prefWidth;
-	private double prefHeight;
+	private static double prefWidth;
+	private static double prefHeight;
 
 	/**
 	 * Creates a Virtual Keyboard.
@@ -75,7 +75,7 @@ public class VirtualKeyboard {
 		final Button escape = createNonshiftableButton("Esc", KeyCode.ESCAPE, modifiers, target);
 		final Button backspace = createNonshiftableButton("<-", KeyCode.BACK_SPACE, modifiers, target);
 		final Button delete = createNonshiftableButton("Del", KeyCode.DELETE, modifiers, target);
-		final Button enter = createNonshiftableButton("Enter", KeyCode.ENTER, modifiers, target);
+		final Button enter = createNonshiftableButton("Ent", KeyCode.ENTER, modifiers, target);
 		final Button tab = createNonshiftableButton("Tab", KeyCode.TAB, modifiers, target);
 
 		// Cursor keys, with graphic instead of text
@@ -133,8 +133,8 @@ public class VirtualKeyboard {
 	 * @return a view of the keyboard.
 	 */
 	public Node view(double prefWidth,double prefHeight) {
-		this.prefHeight=prefHeight;
-		this.prefWidth =prefWidth;
+		VirtualKeyboard.prefHeight=prefHeight;
+		VirtualKeyboard.prefWidth =prefWidth;
 		return root;
 	}
 	public Node view() {
@@ -174,7 +174,7 @@ public class VirtualKeyboard {
 		//button.setPrefSize(46, 28);
 		button.setPrefSize(prefWidth, prefHeight);
 		
-		button.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 11));
+		button.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 21));
 
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -253,6 +253,8 @@ public class VirtualKeyboard {
 
 		private ToggleButton createToggle(final String text) {
 			final ToggleButton tb = new ToggleButton(text);
+			tb.setPrefSize(prefWidth +20, prefHeight+5);
+			tb.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 21));
 			tb.setFocusTraversable(false);
 			return tb;
 		}

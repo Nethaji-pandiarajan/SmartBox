@@ -21,7 +21,7 @@ public class barcodeScanner
 		String jarpath1 =jardir.getParent()+File.separator+"Logs";
 		
 
-		static String baseDir = jardir.getParent()+File.separator+"Logs";
+		static  String baseDir = "."+File.separator+"Logs";
 		
 	public static String getBarcodetext() {
 		

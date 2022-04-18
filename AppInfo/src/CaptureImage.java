@@ -22,7 +22,7 @@ static {
 	System.setProperty("org.slf4j.simpleLogger.defaultLogLevel","info");
 	System.setProperty("org.slf4j.simpleLogger.log.com.github.sarxos.webcam.ds.v4l4j","trace");
 	if(osname.equals("Windows 10")) {
-		System.out.println(osname);
+		//System.out.println(osname);
 	}
 	else {
 	Webcam.setDriver(new FsWebcamDriver());}

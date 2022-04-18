@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -41,13 +43,11 @@ public class ApiModule {
 		return prop.getProperty(key);
 	}
 
-	public static void main(String[] args) {
-
-	}
 
 	public static String RefillValidate(String dcNum) throws IOException {
 
 		String URL = getPropertyValue("server_host") + "/validateData";
+		System.out.println(URL);
 		HttpPost post = new HttpPost(URL);
 		String result = "";
 		String api = getPropertyValue("api_key");
@@ -73,6 +73,7 @@ public class ApiModule {
 	public static String DeliveryValidate(String soNum) throws IOException {
 
 		String URL = getPropertyValue("server_host") + "/validateData";
+		System.out.println(URL);
 		HttpPost post = new HttpPost(URL);
 		String result = "";
 		String api = getPropertyValue("api_key");
@@ -86,13 +87,14 @@ public class ApiModule {
 		json.append("}");
 		// send a JSON data
 		post.setEntity(new StringEntity(json.toString()));
-
+		System.out.println(json);
 		try (CloseableHttpClient httpClient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpClient.execute(post)) {
 
 			result = EntityUtils.toString(response.getEntity());
+			System.out.println(result);
 		}
-
+		
 		return result;
 	}
 
@@ -207,10 +209,8 @@ public class ApiModule {
 			String path = resource.getPath();
 			out = new FileOutputStream(path);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		prop.setProperty(key, value);
@@ -221,7 +221,6 @@ public class ApiModule {
 
 	public static String[] toStringArray() {
 		String arrayString = getPropertyValue("CHECK_TRACKNO_ENTERED");
-	//	System.out.println(arrayString);
 		String[] arr = arrayString.split(" ");
 
 		return arr;
@@ -230,8 +229,14 @@ public class ApiModule {
 
 	public static String[] toFinalApiStringArray() {
 		String arrayString = getPropertyValue("FINAL_API_DATA");
-		String[] arr = arrayString.split(" ");
-
+	//	System.out.println("arrayystring"+arrayString);
+	//	String [] ret = null ;
+		String[] arr = arrayString.split(Pattern.quote("$"));
+//		for (int i = 0 ; i<arr.length;i++) {
+//			//ret[i] = arr[i].substring(0,arr[i].length()-1);
+//			System.out.println("arrto" + arr[i]);
+//
+//		}
 		return arr;
 
 	}
@@ -261,11 +266,36 @@ public class ApiModule {
 
 	}
 
-	public static boolean FinalApiCall() throws ClientProtocolException, IOException {
-		//System.out.println("here");
-		String arrayString = getPropertyValue("FINAL_API_DATA");
-		String[] arr = arrayString.split("$");
+	public static String getqty(JSONArray jsonArray, String trackNo) {
+		boolean found = false;
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject objects = jsonArray.getJSONObject(i);
+			Iterator key = objects.keys();
 
+			while (key.hasNext()) {
+				String k = key.next().toString();
+				if (k.equals("trackingNo")) {
+					if (objects.getString(k).equals(trackNo)) {
+						found = true;
+						break;
+					}
+				}
+			}
+			if (found) {
+				String qty = objects.get("qty").toString();
+				return qty;
+			}
+
+		}
+		return "null";
+
+	}
+
+	public static boolean FinalApiCall() throws ClientProtocolException, IOException {
+		String arrayString = getPropertyValue("FINAL_API_DATA");
+		String[] arr = arrayString.split(Pattern.quote("$"));
+	//	System.out.println(arr.length);
+		
 		JSONObject objout = new JSONObject();
 		String orderType = getPropertyValue("ORDER_TYPE");
 		String OrderValue;
@@ -283,20 +313,26 @@ public class ApiModule {
 			String[] arr2 = arr[i].split(",");
 
 			JSONObject inarr = new JSONObject();
+			//System.out.println(getPropertyValue("ALL_CURR_TRACK_NUMBER"));
+			//System.out.println(arr2[0]);
+			String[] SOIDArray =getPropertyValue("ALL_CURR_TRACK_NUMBER").split(" ");
+			
+			if (Arrays.asList(SOIDArray).contains(arr2[0])) {
+			
 			inarr.put("trackingNo", arr2[0]);
 			inarr.put("lockerName", arr2[1]);
 			inarr.put("prodCode", arr2[2]);
 			inarr.put("status", arr2[3]);
 			inarr.put("lockerOpenDate", arr2[4]);
 			inarr.put("lockerCloseDate", arr2[5]);
-			arrout.put(inarr);
+			arrout.put(inarr);}
 		}
 		objout.put("list", arrout);
-	//	System.out.println(objout);
 		String URL = getPropertyValue("server_host") + "/updateDetils";
 		HttpPost post = new HttpPost(URL);
 		String result = "";
 		String api = getPropertyValue("api_key");
+		System.out.println(objout);
 		post.addHeader("apiKey", api);
 		post.addHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(objout.toString()));
@@ -306,15 +342,17 @@ public class ApiModule {
 
 			result = EntityUtils.toString(response.getEntity());
 		}
-		//System.out.println(result);
+//	
+//		System.out.println(result);
 		return true;
 	}
 
 	public static boolean ForceClose() throws ParseException, IOException {
 
 		String arrayString = getPropertyValue("FINAL_API_DATA");
-		String[] arr = arrayString.split("$");
-
+		String[] arr = arrayString.split(Pattern.quote("$"));
+	//	System.out.println(arr.length);
+		
 		JSONObject objout = new JSONObject();
 		String orderType = getPropertyValue("ORDER_TYPE");
 		String OrderValue;
@@ -330,18 +368,21 @@ public class ApiModule {
 		JSONArray arrout = new JSONArray();
 		for (int i = 0; i < arr.length; i++) {
 			String[] arr2 = arr[i].split(",");
-			if (arr2.length > 1) {
-				JSONObject inarr = new JSONObject();
-				inarr.put("trackingNo", arr2[0]);
-				inarr.put("lockerName", arr2[1]);
-				inarr.put("prodCode", arr2[2]);
-				inarr.put("status", arr2[3]);
-				inarr.put("lockerOpenDate", arr2[4]);
-				inarr.put("lockerCloseDate", arr2[5]);
-				arrout.put(inarr);
-			}
-		}
 
+			JSONObject inarr = new JSONObject();
+			getPropertyValue("ALL_CURR_TRACK_NUMBER");
+			String[] SOIDArray =getPropertyValue("ALL_CURR_TRACK_NUMBER").split(" ");
+
+			if (Arrays.asList(SOIDArray).contains(arr2[0])) {
+			
+			inarr.put("trackingNo", arr2[0]);
+			inarr.put("lockerName", arr2[1]);
+			inarr.put("prodCode", arr2[2]);
+			inarr.put("status", arr2[3]);
+			inarr.put("lockerOpenDate", arr2[4]);
+			inarr.put("lockerCloseDate", arr2[5]);
+			arrout.put(inarr);}
+		}
 		JSONObject jsonObject = new JSONObject(getPropertyValue("OTP_DATA"));
 		JSONArray jsonArray = jsonObject.getJSONArray("data");
 		if (arrout.length() != 0) {
@@ -349,7 +390,6 @@ public class ApiModule {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject loop1 = (JSONObject) jsonArray.get(i);
 				String track1 = (String) loop1.get("trackingNo");
-				System.out.println(loop1.get("trackingNo"));
 				int flag = 0;
 				for (int j = 0; j < arrout.length(); j++) {
 					JSONObject loop2 = (JSONObject) arrout.get(j);
@@ -364,7 +404,7 @@ public class ApiModule {
 					inarr.put("trackingNo", track1);
 					inarr.put("lockerName", loop1.get("lockerName"));
 					inarr.put("prodCode", loop1.get("prodCode"));
-					inarr.put("status", "FAILURE");
+					inarr.put("status", "FAILURE-"+getPropertyValue("CURRENT_CODE"));
 					inarr.put("lockerOpenDate", "");
 					inarr.put("lockerCloseDate", "");
 					arrout.put(inarr);
@@ -381,7 +421,7 @@ public class ApiModule {
 				inarr.put("trackingNo", loop1.get("trackingNo"));
 				inarr.put("lockerName", loop1.get("lockerName"));
 				inarr.put("prodCode", loop1.get("prodCode"));
-				inarr.put("status", "FAILURE");
+				inarr.put("status", "FAILURE-"+getPropertyValue("CURRENT_CODE"));
 				inarr.put("lockerOpenDate", "");
 				inarr.put("lockerCloseDate", "");
 				arrout.put(inarr);
@@ -390,13 +430,10 @@ public class ApiModule {
 		}
 		objout.put("list", arrout);
 		System.out.println(objout);
-
 		String URL = getPropertyValue("server_host") + "/updateDetils";
-		// System.out.println(URL);
 		HttpPost post = new HttpPost(URL);
 		String result = "";
 		String api = getPropertyValue("api_key");
-		// System.out.println(api);
 		post.addHeader("apiKey", api);
 		post.addHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(objout.toString()));
@@ -406,8 +443,6 @@ public class ApiModule {
 
 			result = EntityUtils.toString(response.getEntity());
 		}
-
-		System.out.println("------>" + result);
 		return true;
 	}
 
