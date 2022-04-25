@@ -129,7 +129,9 @@ public class LockerOpen {
 									catch(Exception e) {
 										
 									}
-									System.out.println("Response recevied after door close");
+									
+									sp.closePort();
+									System.out.println("Response recevied after door close, Port Closed");
 									break;
 								}
 						
@@ -214,7 +216,8 @@ public class LockerOpen {
 
 			return false;
 		}
-sp.closePort();
+//sp.closePort();
+		System.out.println("Locker open returns true");
 		return true;
 
 	}

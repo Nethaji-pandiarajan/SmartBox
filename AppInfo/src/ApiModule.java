@@ -337,11 +337,11 @@ public class ApiModule {
 		post.addHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(objout.toString()));
 
-		try (CloseableHttpClient httpClient = HttpClients.createDefault();
-				CloseableHttpResponse response = httpClient.execute(post)) {
-
-			result = EntityUtils.toString(response.getEntity());
-		}
+//		try (CloseableHttpClient httpClient = HttpClients.createDefault();
+//				CloseableHttpResponse response = httpClient.execute(post)) {
+//
+//			result = EntityUtils.toString(response.getEntity());
+//		}
 //	
 //		System.out.println(result);
 		return true;

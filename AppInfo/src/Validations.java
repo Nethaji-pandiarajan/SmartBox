@@ -32,6 +32,9 @@ public class Validations {
 
 	public static boolean isValidConfirmMessage(String deliverySoidNumber, String lockname, String productCode,
 			String qty, int scannedSOIDint, int totalSOIDint) {
+		System.out.println(
+				"deliverySoidNumber: " + deliverySoidNumber + "\nlockname" + lockname + "\nproductCode: " + productCode
+						+ "\nqty: " + qty + "\nscannedSOIDint: " + scannedSOIDint + "\ntotalSOIDint: " + totalSOIDint);
 
 		// System.out.println("Waiting for door closed response...");
 		String LOG_DELIVERY_PRODUCT_CODE_FAILURE = ApiModule.getPropertyValue("LOG_DELIVERY_SO_NUMBER_FAILURE");
@@ -112,7 +115,6 @@ public class Validations {
 
 								} else {
 									OrderValue = ApiModule.getPropertyValue("CURRENT_SO_NUMBER");
-
 								}
 								LogFile.logfile(logDate + "\s " + "OrderType : " + orderType);
 								LogFile.logfile(logDate + "\s " + "SO # : " + OrderValue);
@@ -170,6 +172,11 @@ public class Validations {
 										errorAlert1.setHeaderText(DELIVERY_PRODUCT_CODE_SUCCESS_ALERT_HEADER);
 										errorAlert1.setContentText(DELIVERY_PRODUCT_CODE_SUCCESS_ALERT);
 										errorAlert1.showAndWait();
+										try {
+											ApiModule.setpropertyValue("SUCCESS_FLAG", "1");
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
 									});
 
 									if (ApiModule.FinalApiCall()) {
@@ -181,7 +188,8 @@ public class Validations {
 									ApiModule.setpropertyValue("CURRENT_SO_NUMBER", "");
 									ApiModule.setpropertyValue("ORDER_TYPE", "");
 
-									SmartBox.gotoSetLayout();
+									ApiModule.setpropertyValue("GLOBAL_ALL_CLOSE", "1");
+									// SmartBox.gotoSetLayout();
 								} else {
 									SmartBox.gotodeliveryLayout();
 
@@ -252,7 +260,7 @@ public class Validations {
 
 					//
 					if (Integer.parseInt(ApiModule.getPropertyValue("LOCKER_CLOSED_SIGNAL")) == 1) {
-						System.out.println("From Arduino Closed locker name :" + ardout.nextLine());
+//						System.out.println("From Arduino Closed locker name :" + ardout.nextLine());
 						LocalDateTime lock_close_time = LocalDateTime.now();
 						DateTimeFormatter myFormatObj1 = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
 						String formattedlockCloseDate = lock_close_time.format(myFormatObj1);
@@ -345,14 +353,20 @@ public class Validations {
 									} catch (Exception ex) {
 										ex.printStackTrace();
 									}
-									
-									Platform.runLater( ()->{
-									Alert errorAlert1 = new Alert(AlertType.INFORMATION);
 
-									errorAlert1.setHeaderText(FULFILLMENT_PRODUCT_CODE_SUCCESS_ALERT_HEADER);
-									errorAlert1.setContentText(FULFILLMENT_PRODUCT_CODE_SUCCESS_ALERT);
-									errorAlert1.showAndWait(); 
-									});// System.out.println("Final api call //"); if
+									Platform.runLater(() -> {
+										Alert errorAlert1 = new Alert(AlertType.INFORMATION);
+
+										errorAlert1.setHeaderText(FULFILLMENT_PRODUCT_CODE_SUCCESS_ALERT_HEADER);
+										errorAlert1.setContentText(FULFILLMENT_PRODUCT_CODE_SUCCESS_ALERT);
+										errorAlert1.showAndWait();
+										try {
+											ApiModule.setpropertyValue("SUCCESS_FLAG", "1");
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
+									});
+
 									if (ApiModule.FinalApiCall()) { // System.out.println("Final api call"); //
 										ApiModule.setpropertyValue("FINAL_API_DATA", "");
 									}
@@ -361,7 +375,8 @@ public class Validations {
 									ApiModule.setpropertyValue("CURRENT_DC_NUMBER", "");
 									ApiModule.setpropertyValue("CURRENT_SO_NUMBER", "");
 									ApiModule.setpropertyValue("ORDER_TYPE", "");
-									SmartBox.gotoSetLayout();
+									ApiModule.setpropertyValue("GLOBAL_ALL_CLOSE", "1");
+									// SmartBox.gotoSetLayout();
 								} else {
 									try {
 										LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_SUCCESS);
@@ -395,24 +410,24 @@ public class Validations {
 	}
 
 	public static boolean popupAlert() {
-		boolean isValidMessage = false;
-		ButtonType Yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-		ButtonType No = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+//		boolean isValidMessage = false;
+//		ButtonType Yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+//		ButtonType No = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+//
+//		Platform.runLater(() -> {
+//			Alert alert = new Alert(AlertType.WARNING, "Have you closed your Locker ? ", Yes, No);
+//			alert.setTitle("Confirmation");
+//
+//			// System.out.println("here");
+//			result = alert.showAndWait();
+//		});
+//		if (result.orElse(No) == Yes) {
+//			isValidMessage = true;
+//			Date curr_date = new java.util.Date(System.currentTimeMillis());
+//			return isValidMessage;
+//		}
 
-		Platform.runLater(() -> {
-			Alert alert = new Alert(AlertType.WARNING, "Have you closed your Locker ? ", Yes, No);
-			alert.setTitle("Confirmation");
-
-			// System.out.println("here");
-			result = alert.showAndWait();
-		});
-		if (result.orElse(No) == Yes) {
-			isValidMessage = true;
-			Date curr_date = new java.util.Date(System.currentTimeMillis());
-			return isValidMessage;
-		}
-
-		return popupAlert();
+		return true;
 	}
 
 }

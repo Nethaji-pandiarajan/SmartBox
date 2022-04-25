@@ -187,7 +187,7 @@ public class SmartBox extends Application {
 	static Label fulfillmentDoorNametext;
 
 	static HBox otpHbox3 = null;
-	
+
 	static VBox vbox;
 
 	static VBox otpVBox1 = null;
@@ -204,9 +204,9 @@ public class SmartBox extends Application {
 	static Button resendOtp = null;
 
 	public static void main(String[] args) {
-		
+
 		System.out.println("VERSION_DATED - 23/03/2022");
-		
+
 		try {
 			File jardir = new File(SmartBox.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 			String jarpath = jardir.getParent();
@@ -216,9 +216,9 @@ public class SmartBox extends Application {
 			String baseDir = jarpath;
 
 			String newDir = LogFile.createDateBasedDirectory(baseDir, dir);
-			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL","0");
-			
-			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL","0");
+			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL", "0");
+
+			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL", "0");
 			ApiModule.setpropertyValue("ALL_CURR_TRACK_NUMBER", "");
 			ApiModule.setpropertyValue("IMAGE_COUNT", String.valueOf(1));
 			ApiModule.setpropertyValue("CURRENT_DC_NUMBER", "");
@@ -261,11 +261,11 @@ public class SmartBox extends Application {
 		helpButton = new Button("Help");
 
 		try {
-		
-				ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL","0");
-			
-					ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL","0");
-				
+
+			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL", "0");
+
+			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL", "0");
+
 			ApiModule.setpropertyValue("ALL_CURR_TRACK_NUMBER", "");
 			ApiModule.setpropertyValue("IMAGE_COUNT", String.valueOf(1));
 			ApiModule.setpropertyValue("CURRENT_DC_NUMBER", "");
@@ -546,64 +546,73 @@ public class SmartBox extends Application {
 		scanButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 
-				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO: must be
+				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO:
+																									// must be
 				// changed
-				
+
 				sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
 				sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-				
+
 				sp.setFlowControl(SerialPort.FLOW_CONTROL_RTS_ENABLED);
-				Scanner ardout = new Scanner(sp.getInputStream());
-				if(sp.openPort()){
+				
+				if (sp.openPort()) {
 					System.out.println("Scanner port is opened");
-					 final ThreadPoolExecutor executor = 
-							  (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+					byte[] b = "<<<A0035;>>>".getBytes();
+					sp.writeBytes(b, 20);
+					byte[] b1 = "A0035".getBytes();
+					sp.writeBytes(b1, 20);
+					byte[] b2 = "<<<!A0035;>>>".getBytes();
+					sp.writeBytes(b2, 20);
+					byte[] b3 = "<<<?A0035;>>>".getBytes();
+					sp.writeBytes(b3, 20);
+					byte[] b4 = "Start: <<<A0035;>>>".getBytes();
+					sp.writeBytes(b4, 20);
+					byte[] b5 = "<<<A0035; >>>".getBytes();
+					sp.writeBytes(b5, 20);
+					byte[] b6 = "<<<A 0035;>>>".getBytes();
+					sp.writeBytes(b6, 20);
+					byte[] b7 = "<<<A 0035; >>>".getBytes();
+					sp.writeBytes(b7, 20);
+					byte[] b8 = "<<< A0035; >>>".getBytes();
+					sp.writeBytes(b8, 20);
+					final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
-							executor.submit(new Runnable() {
-							     @Override 
-							     public void run() { 
-							    	 while(ardout.hasNextLine()) {
-							    		 String res_barcode = ardout.nextLine();
-							    		 
-							    		 System.out.println("barcode : "+res_barcode);
-							    		 scan.setText(res_barcode);
-							    		 break;
-							    	 }
-							     
-							     }
-							});
-							
-					
+					executor.submit(new Runnable() {
+						@Override
+						public void run() {
+							Scanner ardout = new Scanner(sp.getInputStream());
+							while (ardout.hasNextLine()) {
+								String res_barcode = ardout.nextLine();
+
+								System.out.println("barcode : " + res_barcode);
+								scan.setText(res_barcode);
+								byte[] bb = "<<<A0036;>>>".getBytes();
+								sp.writeBytes(bb, 20);
+								break;
+							}
+
+						}
+					});
+
 				}
 
-			/*	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				if (barcodeScanner.getBarcodetext().equals("noValue")) {
-					try {
-						LogFile.logfile(logDate + "/s " + LOG_DELIVERY_SO_NUMBER_FAILURE);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					Alert errorAlert = new Alert(AlertType.ERROR);
-					errorAlert.setHeaderText(DELIVERY_SO_NUMBER_FAILURE_ERROR_ALERT_HEADER);
-					errorAlert.setContentText(DELIVERY_SO_NUMBER_FAILURE_ERROR_ALERT);
-					errorAlert.showAndWait();
-				} else {
-					scan.setText(barcodeScanner.getBarcodetext());
-					try {
-						LogFile.logfile(logDate + "/s " + LOG_DELIVERY_SO_NUMBER_SUCCESS);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
-				String baseDir = "." + File.separator + "Logs"; */
-			//	File file = new File(baseDir + File.separator + "barcode.png");
+				/*
+				 * try { Thread.sleep(5000); } catch (InterruptedException e1) { // TODO
+				 * Auto-generated catch block e1.printStackTrace(); } if
+				 * (barcodeScanner.getBarcodetext().equals("noValue")) { try {
+				 * LogFile.logfile(logDate + "/s " + LOG_DELIVERY_SO_NUMBER_FAILURE); } catch
+				 * (Exception e1) { e1.printStackTrace(); } Alert errorAlert = new
+				 * Alert(AlertType.ERROR);
+				 * errorAlert.setHeaderText(DELIVERY_SO_NUMBER_FAILURE_ERROR_ALERT_HEADER);
+				 * errorAlert.setContentText(DELIVERY_SO_NUMBER_FAILURE_ERROR_ALERT);
+				 * errorAlert.showAndWait(); } else {
+				 * scan.setText(barcodeScanner.getBarcodetext()); try { LogFile.logfile(logDate
+				 * + "/s " + LOG_DELIVERY_SO_NUMBER_SUCCESS); } catch (Exception e1) {
+				 * e1.printStackTrace(); } } String baseDir = "." + File.separator + "Logs";
+				 */
+				// File file = new File(baseDir + File.separator + "barcode.png");
 
-			//	file.delete();
+				// file.delete();
 
 			}
 		});
@@ -998,6 +1007,12 @@ public class SmartBox extends Application {
 	}
 
 	public static void deliverySOID(double sWidth, double sHeight) {
+		
+		homeButton.setDisable(false);
+		forceClose.setDisable(false);
+		scan.setDisable(false);
+		enterButton.setDisable(false);
+		scanButton.setDisable(false);
 
 		String LOG_DELIVERY_SOID_NUMBER_FAILURE = ApiModule.getPropertyValue("LOG_DELIVERY_SOID_NUMBER_FAILURE");
 		String LOG_DELIVERY_SOID_NUMBER_SUCCESS = ApiModule.getPropertyValue("LOG_DELIVERY_SOID_NUMBER_SUCCESS");
@@ -1197,64 +1212,76 @@ public class SmartBox extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 
-				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO: must be
+				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO:
+																									// must be
 				// changed
-				
+
 				sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
 				sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-				
+
 				sp.setFlowControl(SerialPort.FLOW_CONTROL_RTS_ENABLED);
-				Scanner ardout = new Scanner(sp.getInputStream());
-				if(sp.openPort()){
+				
+				if (sp.openPort()) {
 					System.out.println("Scanner port is opened");
-					 final ThreadPoolExecutor executor = 
-							  (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+					byte[] b = "<<<A0035;>>>".getBytes();
+					sp.writeBytes(b, 20);
+					byte[] b1 = "A0035".getBytes();
+					sp.writeBytes(b1, 20);
+					byte[] b2 = "<<<!A0035;>>>".getBytes();
+					sp.writeBytes(b2, 20);
+					byte[] b3 = "<<<?A0035;>>>".getBytes();
+					sp.writeBytes(b3, 20);
+					byte[] b4 = "Start: <<<A0035;>>>".getBytes();
+					sp.writeBytes(b4, 20);
+					byte[] b5 = "<<<A0035; >>>".getBytes();
+					sp.writeBytes(b5, 20);
+					byte[] b6 = "<<<A 0035;>>>".getBytes();
+					sp.writeBytes(b6, 20);
+					byte[] b7 = "<<<A 0035; >>>".getBytes();
+					sp.writeBytes(b7, 20);
+					byte[] b8 = "<<< A0035; >>>".getBytes();
+					sp.writeBytes(b8, 20);
+					final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
-							executor.submit(new Runnable() {
-							     @Override 
-							     public void run() { 
-							    	 while(ardout.hasNextLine()) {
-							    		 String res_barcode = ardout.nextLine();
-							    		 
-							    		 System.out.println("barcode : "+res_barcode);
-							    		 scan.setText(res_barcode);
-							    		 break;
-							    	 }
-							     
-							     }
-							});
-							
-					
+					executor.submit(new Runnable() {
+						@Override
+						public void run() {
+							Scanner ardout = new Scanner(sp.getInputStream());
+							while (ardout.hasNextLine()) {
+								
+								String res_barcode = ardout.nextLine();
+
+								System.out.println("barcode : " + res_barcode);
+								scan.setText(res_barcode);
+								byte[] bb = "<<<A0036;>>>".getBytes();
+								sp.writeBytes(bb, 20);
+								break;
+							}
+
+						}
+					});
+
 				}
 
-			/*	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				if (barcodeScanner.getBarcodetext().equals("noValue")) {
-					try {
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_FAILURE);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					Alert errorAlert = new Alert(AlertType.ERROR);
-					errorAlert.setHeaderText(DELIVERY_SOID_NUMBER_FAILURE_ERROR_ALERT_HEADER);
-					errorAlert.setContentText(DELIVERY_SOID_NUMBER_FAILURE_ERROR_ALERT);
-					errorAlert.showAndWait();
-				} else {
-					try {
+				/*
+				 * try { Thread.sleep(5000); } catch (InterruptedException e1) {
+				 * e1.printStackTrace(); } if
+				 * (barcodeScanner.getBarcodetext().equals("noValue")) { try {
+				 * LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_FAILURE); } catch
+				 * (Exception ex) { ex.printStackTrace(); } Alert errorAlert = new
+				 * Alert(AlertType.ERROR);
+				 * errorAlert.setHeaderText(DELIVERY_SOID_NUMBER_FAILURE_ERROR_ALERT_HEADER);
+				 * errorAlert.setContentText(DELIVERY_SOID_NUMBER_FAILURE_ERROR_ALERT);
+				 * errorAlert.showAndWait(); } else { try {
+				 * 
+				 * LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_SUCCESS); } catch
+				 * (Exception ex) { ex.printStackTrace(); }
+				 * scan.setText(barcodeScanner.getBarcodetext()); } String baseDir = "." +
+				 * File.separator + "Logs";
+				 */
+				// File file = new File(baseDir + File.separator + "barcode.png");
 
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_SOID_NUMBER_SUCCESS);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					scan.setText(barcodeScanner.getBarcodetext());
-				}
-				String baseDir = "." + File.separator + "Logs";*/
-			//	File file = new File(baseDir + File.separator + "barcode.png");
-
-			//	file.delete();
+				// file.delete();
 
 			}
 		});
@@ -1444,13 +1471,18 @@ public class SmartBox extends Application {
 						} catch (Exception ex) {
 							System.out.println("Camera issue");
 						}
-
+						homeButton.setDisable(true);
+						forceClose.setDisable(true);
+						scan.setDisable(true);
+						enterButton.setDisable(true);
+						scanButton.setDisable(true);
+						SOIDscan.setDisable(true);
 						boolean lockerOpenTime1 = LockerOpen.OpenLocker(lockname);
 						if (lockerOpenTime1) {
 							LocalDateTime lock_open_time = LocalDateTime.now();
 							DateTimeFormatter myFormatObj1 = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
 							formattedlockOpenDate = lock_open_time.format(myFormatObj1);
-						//	System.out.println("Locker Opened At :" + formattedlockOpenDate);
+							// System.out.println("Locker Opened At :" + formattedlockOpenDate);
 
 							try {
 								ApiModule.setpropertyValue("GLOBAL_LOCKER_OPEN", formattedlockOpenDate);
@@ -1459,8 +1491,7 @@ public class SmartBox extends Application {
 								e2.printStackTrace();
 							}
 							// LockerOpen.OpenLockerConfirmation();
-							homeButton.setDisable(true);
-							forceClose.setDisable(true);
+
 							System.out.println("Disabled :" + homeButton.isDisabled());
 
 							String scannedSOID = ApiModule.getPropertyValue("DELIVERY_SCANNED_SOID");
@@ -1487,6 +1518,7 @@ public class SmartBox extends Application {
 						// System.out.println("cve");
 						Validations.isValidConfirmMessage(deliverySoidNumber, lockname, productCode, qty,
 								scannedSOIDint, totalSOIDint);
+						gotoSetLayout();
 					} else {
 						try {
 
@@ -1549,13 +1581,20 @@ public class SmartBox extends Application {
 						} catch (Exception ex) {
 							System.out.println("Camera issue");
 						}
+						homeButton.setDisable(true);
+						forceClose.setDisable(true);
+						scan.setDisable(true);
+						enterButton.setDisable(true);
+						scanButton.setDisable(true);
+						SOIDscan.setDisable(true);
 
 						boolean lockerOpenTime1 = LockerOpen.OpenLocker(lockname);
 						if (lockerOpenTime1) {
+
 							LocalDateTime lock_open_time = LocalDateTime.now();
 							DateTimeFormatter myFormatObj1 = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
 							formattedlockOpenDate = lock_open_time.format(myFormatObj1);
-							//System.out.println("Locker Opened At :" + formattedlockOpenDate);
+							// System.out.println("Locker Opened At :" + formattedlockOpenDate);
 
 							try {
 								ApiModule.setpropertyValue("GLOBAL_LOCKER_OPEN", formattedlockOpenDate);
@@ -1563,9 +1602,8 @@ public class SmartBox extends Application {
 								// TODO Auto-generated catch block
 								e2.printStackTrace();
 							}
-						//	LockerOpen.OpenLockerConfirmation();
-							homeButton.setDisable(true);
-							forceClose.setDisable(true);
+							// LockerOpen.OpenLockerConfirmation();
+
 							System.out.println("Disabled :" + homeButton.isDisabled());
 
 							String scannedSOID = ApiModule.getPropertyValue("DELIVERY_SCANNED_SOID");
@@ -1593,6 +1631,7 @@ public class SmartBox extends Application {
 						// System.out.println("cve");
 						Validations.isValidConfirmMessage(deliverySoidNumber, lockname, productCode, qty,
 								scannedSOIDint, totalSOIDint);
+						gotoSetLayout();
 
 					} else {
 						try {
@@ -1618,65 +1657,76 @@ public class SmartBox extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 
-				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO: must be
+				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO:
+																									// must be
 				// changed
-				
+
 				sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
 				sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-				
+
 				sp.setFlowControl(SerialPort.FLOW_CONTROL_RTS_ENABLED);
-				Scanner ardout = new Scanner(sp.getInputStream());
-				if(sp.openPort()){
+				if (sp.openPort()) {
 					System.out.println("Scanner port is opened");
-					 final ThreadPoolExecutor executor = 
-							  (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+					byte[] b = "<<<A0035;>>>".getBytes();
+					sp.writeBytes(b, 20);
+					byte[] b1 = "A0035".getBytes();
+					sp.writeBytes(b1, 20);
+					byte[] b2 = "<<<!A0035;>>>".getBytes();
+					sp.writeBytes(b2, 20);
+					byte[] b3 = "<<<?A0035;>>>".getBytes();
+					sp.writeBytes(b3, 20);
+					byte[] b4 = "Start: <<<A0035;>>>".getBytes();
+					sp.writeBytes(b4, 20);
+					byte[] b5 = "<<<A0035; >>>".getBytes();
+					sp.writeBytes(b5, 20);
+					byte[] b6 = "<<<A 0035;>>>".getBytes();
+					sp.writeBytes(b6, 20);
+					byte[] b7 = "<<<A 0035; >>>".getBytes();
+					sp.writeBytes(b7, 20);
+					byte[] b8 = "<<< A0035; >>>".getBytes();
+					sp.writeBytes(b8, 20);
+					final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
-							executor.submit(new Runnable() {
-							     @Override 
-							     public void run() { 
-							    	 while(ardout.hasNextLine()) {
-							    		 String res_barcode = ardout.nextLine();
-							    		 
-							    		 System.out.println("barcode : "+res_barcode);
-							    		 scan.setText(res_barcode);
-							    		 break;
-							    	 }
-							     
-							     }
-							});
-							
-					
+					executor.submit(new Runnable() {
+						@Override
+						public void run() {
+							Scanner ardout = new Scanner(sp.getInputStream());
+
+							while (ardout.hasNextLine()) {
+								String res_barcode = ardout.nextLine();
+
+								System.out.println("barcode : " + res_barcode);
+								scan.setText(res_barcode);
+								byte[] bb = "<<<A0036;>>>".getBytes();
+								sp.writeBytes(bb, 20);
+								break;
+							}
+
+						}
+					});
+
 				}
 
-			/*	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				if (barcodeScanner.getBarcodetext().equals("noValue")) {
-					try {
+				/*
+				 * try { Thread.sleep(5000); } catch (InterruptedException e1) {
+				 * e1.printStackTrace(); } if
+				 * (barcodeScanner.getBarcodetext().equals("noValue")) { try {
+				 * 
+				 * LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE); } catch
+				 * (Exception ex) { ex.printStackTrace(); } Alert errorAlert = new
+				 * Alert(AlertType.ERROR);
+				 * errorAlert.setHeaderText(DELIVERY_PRODUCT_CODE_FAILURE_ERROR_ALERT_HEADER);
+				 * errorAlert.setContentText(DELIVERY_PRODUCT_CODE_FAILURE_ERROR_ALERT);
+				 * errorAlert.showAndWait(); } else { try {
+				 * 
+				 * LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE); } catch
+				 * (Exception ex) { ex.printStackTrace(); }
+				 * scan.setText(barcodeScanner.getBarcodetext()); } String baseDir = "." +
+				 * File.separator + "Logs";
+				 */
+				// File file = new File(baseDir + File.separator + "barcode.png");
 
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					Alert errorAlert = new Alert(AlertType.ERROR);
-					errorAlert.setHeaderText(DELIVERY_PRODUCT_CODE_FAILURE_ERROR_ALERT_HEADER);
-					errorAlert.setContentText(DELIVERY_PRODUCT_CODE_FAILURE_ERROR_ALERT);
-					errorAlert.showAndWait();
-				} else {
-					try {
-
-						LogFile.logfile(logDate + "\s " + LOG_DELIVERY_PRODUCT_CODE_FAILURE);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					scan.setText(barcodeScanner.getBarcodetext());
-				}
-				String baseDir = "." + File.separator + "Logs";*/
-			//	File file = new File(baseDir + File.separator + "barcode.png");
-
-			//	file.delete();
+				// file.delete();
 
 			}
 		});
@@ -1719,14 +1769,13 @@ public class SmartBox extends Application {
 		deliveryDoorNametext = new Label("");
 		deliveryDoorNametext.setTextFill(Color.WHITE);
 		deliveryDoorNametext.setTextAlignment(TextAlignment.CENTER);
-		deliveryDoorNametext.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, 15));
+		deliveryDoorNametext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, 15));
 		deliveryDoorNametext.setText("");
 		delHbox5.getChildren().add(deliveryDoorNametext);
 		delHbox5.setAlignment(Pos.CENTER);
 
 		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox5,delHbox0, delHbox1, delHbox3);
+		vbox.getChildren().addAll(delHbox5, delHbox0, delHbox1, delHbox3);
 		vbox.setAlignment(Pos.CENTER);
 
 		delHbox2 = new HBox();
@@ -1765,40 +1814,63 @@ public class SmartBox extends Application {
 	}
 
 	public static void gotoSetLayout() {
-		try {
-			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL","0");
-			
-			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL","0");
+
+		final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+
+		executor.submit(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("gotosetLayout - run");
+				while (true) {
+					if (ApiModule.getPropertyValue("GLOBAL_ALL_CLOSE").equals("1")
+							&& ApiModule.getPropertyValue("SUCCESS_FLAG").equals("1")) {
+						try {
+							System.out.println("gotosetLayout - run -- if");
+
+							ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL", "0");
+							ApiModule.setpropertyValue("GLOBAL_ALL_CLOSE", "0");
+							ApiModule.setpropertyValue("SUCCESS_FLAG", "0");
+							ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL", "0");
+							Platform.runLater(() -> {
+								setLayout();
+
+							});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+					}
+				}
 			}
-			catch(Exception e) {
-				
-			}
-		setLayout();
+		});
+
 	}
 
 	public static void gotodeliveryLayout() {
-		
+
 		try {
-			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL","0");
-			
-			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL","0");
-			}
-			catch(Exception e) {
-				
-			}
-		deliverySOID(sp.getSceneWidth(), sp.getSceneHeight());
+			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL", "0");
+
+			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL", "0");
+		} catch (Exception e) {
+
+		}
+		Platform.runLater(() -> {
+			deliverySOID(sp.getSceneWidth(), sp.getSceneHeight());
+		});
 	}
 
 	public static void gotofulfillmentLayout() {
 		try {
-			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL","0");
-			
-			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL","0");
+			ApiModule.setpropertyValue("LOCKER_CLOSED_SIGNAL", "0");
+
+			ApiModule.setpropertyValue("LOCKER_OPEN_SIGNAL", "0");
+		} catch (Exception e) {
+
 		}
-		catch(Exception e) {
-			
-		}
-		fulfillmentSOID(sp.getSceneWidth(), sp.getSceneHeight());
+		Platform.runLater(() -> {
+			fulfillmentSOID(sp.getSceneWidth(), sp.getSceneHeight());
+		});
 	}
 
 	public static void deliveryForceClose() {
@@ -2000,70 +2072,75 @@ public class SmartBox extends Application {
 
 			@Override
 			public void handle(ActionEvent e) {
-				
-				
 
-				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO: must be
+				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO:
+																									// must be
 				// changed
-				
+
 				sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
 				sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-				
+
 				sp.setFlowControl(SerialPort.FLOW_CONTROL_RTS_ENABLED);
-				Scanner ardout = new Scanner(sp.getInputStream());
-				if(sp.openPort()){
+				
+				if (sp.openPort()) {
 					System.out.println("Scanner port is opened");
-					 final ThreadPoolExecutor executor = 
-							  (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+					byte[] b = "<<<A0035;>>>".getBytes();
+					sp.writeBytes(b, 20);
+					byte[] b1 = "A0035".getBytes();
+					sp.writeBytes(b1, 20);
+					byte[] b2 = "<<<!A0035;>>>".getBytes();
+					sp.writeBytes(b2, 20);
+					byte[] b3 = "<<<?A0035;>>>".getBytes();
+					sp.writeBytes(b3, 20);
+					byte[] b4 = "Start: <<<A0035;>>>".getBytes();
+					sp.writeBytes(b4, 20);
+					byte[] b5 = "<<<A0035; >>>".getBytes();
+					sp.writeBytes(b5, 20);
+					byte[] b6 = "<<<A 0035;>>>".getBytes();
+					sp.writeBytes(b6, 20);
+					byte[] b7 = "<<<A 0035; >>>".getBytes();
+					sp.writeBytes(b7, 20);
+					byte[] b8 = "<<< A0035; >>>".getBytes();
+					sp.writeBytes(b8, 20);
+					final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
-							executor.submit(new Runnable() {
-							     @Override 
-							     public void run() { 
-							    	 while(ardout.hasNextLine()) {
-							    		 String res_barcode = ardout.nextLine();
-							    		 
-							    		 System.out.println("barcode : "+res_barcode);
-							    		 scan.setText(res_barcode);
-							    		 break;
-							    	 }
-							     
-							     }
-							});
-							
-					
+					executor.submit(new Runnable() {
+						@Override
+						public void run() {
+							Scanner ardout = new Scanner(sp.getInputStream());
+							while (ardout.hasNextLine()) {
+								String res_barcode = ardout.nextLine();
+
+								System.out.println("barcode : " + res_barcode);
+								scan.setText(res_barcode);
+								byte[] bb = "<<<A0036;>>>".getBytes();
+								sp.writeBytes(bb, 20);
+								break;
+							}
+
+						}
+					});
+
 				}
 
-				
-				
-				
-			/*	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				if (barcodeScanner.getBarcodetext().equals("noValue")) {
-					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_FAILURE);
+				/*
+				 * try { Thread.sleep(5000); } catch (InterruptedException e1) {
+				 * e1.printStackTrace(); } if
+				 * (barcodeScanner.getBarcodetext().equals("noValue")) { try {
+				 * LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_FAILURE);
+				 * 
+				 * } catch (Exception ex) { ex.printStackTrace(); } Alert errorAlert = new
+				 * Alert(AlertType.ERROR);
+				 * errorAlert.setHeaderText(FULFILLMENT_DC_NUMBER_FAILURE_ERROR_ALERT_HEADER);
+				 * errorAlert.setContentText(FULFILLMENT_DC_NUMBER_FAILURE_ERROR_ALERT);
+				 * errorAlert.showAndWait(); } else { try { LogFile.logfile(logDate + "\s " +
+				 * LOG_FULFILLMENT_DC_NUMBER_SUCCESS); } catch (Exception ex) {
+				 * ex.printStackTrace(); } scan.setText(barcodeScanner.getBarcodetext()); }
+				 * String baseDir = "." + File.separator + "Logs";
+				 */
+				// File file = new File(baseDir + File.separator + "barcode.png");
 
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					Alert errorAlert = new Alert(AlertType.ERROR);
-					errorAlert.setHeaderText(FULFILLMENT_DC_NUMBER_FAILURE_ERROR_ALERT_HEADER);
-					errorAlert.setContentText(FULFILLMENT_DC_NUMBER_FAILURE_ERROR_ALERT);
-					errorAlert.showAndWait();
-				} else {
-					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_DC_NUMBER_SUCCESS);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					scan.setText(barcodeScanner.getBarcodetext());
-				}
-				String baseDir = "." + File.separator + "Logs"; */
-		//	File file = new File(baseDir + File.separator + "barcode.png");
-
-			//	file.delete();
+				// file.delete();
 			}
 		});
 
@@ -2420,6 +2497,12 @@ public class SmartBox extends Application {
 	}
 
 	public static void fulfillmentSOID(double sWidth, double sHeight) {
+		
+		homeButton.setDisable(false);
+		forceClose.setDisable(false);
+		scan.setDisable(false);
+		enterButton.setDisable(false);
+		scanButton.setDisable(false);
 
 		String LOG_FULFILLMENT_SOID_NUMBER_FAILURE = ApiModule.getPropertyValue("LOG_FULFILLMENT_SOID_NUMBER_FAILURE");
 		String LOG_FULFILLMENT_SOID_NUMBER_SUCCESS = ApiModule.getPropertyValue("LOG_FULFILLMENT_SOID_NUMBER_SUCCESS");
@@ -2597,67 +2680,76 @@ public class SmartBox extends Application {
 
 			@Override
 			public void handle(ActionEvent e) {
-				
-				
-				
-				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO: must be
+
+				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO:
+																									// must be
 				// changed
-				
+
 				sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
 				sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-				
+
 				sp.setFlowControl(SerialPort.FLOW_CONTROL_RTS_ENABLED);
-				Scanner ardout = new Scanner(sp.getInputStream());
-				if(sp.openPort()){
+				if (sp.openPort()) {
 					System.out.println("Scanner port is opened");
-					 final ThreadPoolExecutor executor = 
-							  (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+					byte[] b = "<<<A0035;>>>".getBytes();
+					sp.writeBytes(b, 20);
+					byte[] b1 = "A0035".getBytes();
+					sp.writeBytes(b1, 20);
+					byte[] b2 = "<<<!A0035;>>>".getBytes();
+					sp.writeBytes(b2, 20);
+					byte[] b3 = "<<<?A0035;>>>".getBytes();
+					sp.writeBytes(b3, 20);
+					byte[] b4 = "Start: <<<A0035;>>>".getBytes();
+					sp.writeBytes(b4, 20);
+					byte[] b5 = "<<<A0035; >>>".getBytes();
+					sp.writeBytes(b5, 20);
+					byte[] b6 = "<<<A 0035;>>>".getBytes();
+					sp.writeBytes(b6, 20);
+					byte[] b7 = "<<<A 0035; >>>".getBytes();
+					sp.writeBytes(b7, 20);
+					byte[] b8 = "<<< A0035; >>>".getBytes();
+					sp.writeBytes(b8, 20);
+					final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
-							executor.submit(new Runnable() {
-							     @Override 
-							     public void run() { 
-							    	 while(ardout.hasNextLine()) {
-							    		 String res_barcode = ardout.nextLine();
-							    		 
-							    		 System.out.println("barcode : "+res_barcode);
-							    		 scan.setText(res_barcode);
-							    		 break;
-							    	 }
-							     
-							     }
-							});
-							
-					
+					executor.submit(new Runnable() {
+						@Override
+						public void run() {
+							Scanner ardout = new Scanner(sp.getInputStream());
+
+							while (ardout.hasNextLine()) {
+								String res_barcode = ardout.nextLine();
+
+								System.out.println("barcode : " + res_barcode);
+								scan.setText(res_barcode);
+								byte[] bb = "<<<A0036;>>>".getBytes();
+								sp.writeBytes(bb, 20);
+								break;
+							}
+
+						}
+					});
+
 				}
-			/*	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				if (barcodeScanner.getBarcodetext().equals("noValue")) {
-					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_FAILURE);
+				/*
+				 * try { Thread.sleep(5000); } catch (InterruptedException e1) {
+				 * e1.printStackTrace(); } if
+				 * (barcodeScanner.getBarcodetext().equals("noValue")) { try {
+				 * LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_FAILURE);
+				 * 
+				 * } catch (Exception ex) { ex.printStackTrace(); } Alert errorAlert = new
+				 * Alert(AlertType.ERROR);
+				 * errorAlert.setHeaderText(FULFILLMENT_SOID_NUMBER_FAILURE_ERROR_ALERT_HEADER);
+				 * errorAlert.setContentText(FULFILLMENT_SOID_NUMBER_FAILURE_ERROR_ALERT);
+				 * errorAlert.showAndWait(); } else { try { LogFile.logfile(logDate + "\s " +
+				 * LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
+				 * 
+				 * } catch (Exception ex) { ex.printStackTrace(); }
+				 * scan.setText(barcodeScanner.getBarcodetext()); } String baseDir = "." +
+				 * File.separator + "Logs";
+				 */
+				// File file = new File(baseDir + File.separator + "barcode.png");
 
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					Alert errorAlert = new Alert(AlertType.ERROR);
-					errorAlert.setHeaderText(FULFILLMENT_SOID_NUMBER_FAILURE_ERROR_ALERT_HEADER);
-					errorAlert.setContentText(FULFILLMENT_SOID_NUMBER_FAILURE_ERROR_ALERT);
-					errorAlert.showAndWait();
-				} else {
-					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_SOID_NUMBER_SUCCESS);
-
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					scan.setText(barcodeScanner.getBarcodetext());
-				}
-				String baseDir = "." + File.separator + "Logs"; */
-		//		File file = new File(baseDir + File.separator + "barcode.png");
-
-		//		file.delete();
+				// file.delete();
 
 			}
 		});
@@ -2713,6 +2805,7 @@ public class SmartBox extends Application {
 
 	public static void fulfillmentProductCode(String fulSoidNumber, double sWidth, double sHeight) {
 
+		
 		try {
 			ApiModule.setpropertyValue("GLOBAL_LOCKER_OPEN", "");
 			ApiModule.setpropertyValue("GLOBAL_LOCKER_CLOSE", "");
@@ -2801,6 +2894,7 @@ public class SmartBox extends Application {
 		fullSOIDscan.setStyle(
 				"-fx-background-color:White;-fx-border-color:black;-fx-border-radius:5;-fx-base:lightblue;-fx-padding: 8;-fx-text-inner-color: Black;");
 		fullSOIDscan.setText(fulSoidNumber);
+		fullSOIDscan.setDisable(true);
 
 		Button fullSOIDenterButton = new Button("Enter");
 		fullSOIDenterButton.setFont(
@@ -2852,14 +2946,21 @@ public class SmartBox extends Application {
 						int fulfillmentscannedSOIDint = 0;
 						String fulillmenttotalSOID;
 						int fulFillmenttotalSOIDint = 0;
+						homeButton.setDisable(true);
+						forceClose.setDisable(true);
+						scan.setDisable(true);
+						enterButton.setDisable(true);
+						scanButton.setDisable(true);
+						fullSOIDscan.setDisable(true);
+
 						boolean lockerOpenTime1 = LockerOpen.OpenLocker(lockname);
 						if (lockerOpenTime1) {
 
-						//	LockerOpen.OpenLockerConfirmation();
+							// LockerOpen.OpenLockerConfirmation();
 							LocalDateTime lock_open_time = LocalDateTime.now();
 							DateTimeFormatter myFormatObj1 = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
 							formattedlockOpenDate = lock_open_time.format(myFormatObj1);
-						//	System.out.println("Locker Opened At :" + formattedlockOpenDate);
+							// System.out.println("Locker Opened At :" + formattedlockOpenDate);
 
 							try {
 								ApiModule.setpropertyValue("GLOBAL_LOCKER_OPEN", formattedlockOpenDate);
@@ -2868,8 +2969,6 @@ public class SmartBox extends Application {
 								e2.printStackTrace();
 							}
 
-							homeButton.setDisable(true);
-							forceClose.setDisable(true);
 							System.out.println("Disabled :" + homeButton.isDisabled());
 
 							// Fullfilment soid number
@@ -2908,6 +3007,7 @@ public class SmartBox extends Application {
 						// System.out.println("cve");
 						Validations.isValidConfirmMessage2(fulSoidNumber, lockname, productCode, qty,
 								fulfillmentscannedSOIDint, fulFillmenttotalSOIDint);
+						gotoSetLayout();
 
 					} else {
 
@@ -2971,14 +3071,21 @@ public class SmartBox extends Application {
 						int fulfillmentscannedSOIDint = 0;
 						String fulillmenttotalSOID;
 						int fulFillmenttotalSOIDint = 0;
+						homeButton.setDisable(true);
+						forceClose.setDisable(true);
+						scan.setDisable(true);
+						enterButton.setDisable(true);
+						scanButton.setDisable(true);
+						fullSOIDscan.setDisable(true);
+
 						boolean lockerOpenTime1 = LockerOpen.OpenLocker(lockname);
 						if (lockerOpenTime1) {
 
-							//LockerOpen.OpenLockerConfirmation();
+							// LockerOpen.OpenLockerConfirmation();
 							LocalDateTime lock_open_time = LocalDateTime.now();
 							DateTimeFormatter myFormatObj1 = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
 							formattedlockOpenDate = lock_open_time.format(myFormatObj1);
-						//	System.out.println("Locker Opened At :" + formattedlockOpenDate);
+							// System.out.println("Locker Opened At :" + formattedlockOpenDate);
 
 							try {
 								ApiModule.setpropertyValue("GLOBAL_LOCKER_OPEN", formattedlockOpenDate);
@@ -2987,8 +3094,6 @@ public class SmartBox extends Application {
 								e2.printStackTrace();
 							}
 
-							homeButton.setDisable(true);
-							forceClose.setDisable(true);
 							System.out.println("Disabled :" + homeButton.isDisabled());
 
 							// Fullfilment soid number
@@ -3024,6 +3129,7 @@ public class SmartBox extends Application {
 
 						Validations.isValidConfirmMessage2(fulSoidNumber, lockname, productCode, qty,
 								fulfillmentscannedSOIDint, fulFillmenttotalSOIDint);
+						gotoSetLayout();
 						// System.out.println("cve");
 						/*
 						 * if (Validations.isValidConfirmMessage()) { String lockerOpenTime2 =
@@ -3126,61 +3232,74 @@ public class SmartBox extends Application {
 
 			@Override
 			public void handle(ActionEvent e) {
-				
 
-				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO: must be
+				SerialPort sp = SerialPort.getCommPort(ApiModule.getPropertyValue("SCANNER_PORT")); // device name TODO:
+																									// must be
 				// changed
-				
+
 				sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
 				sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-				
+
 				sp.setFlowControl(SerialPort.FLOW_CONTROL_RTS_ENABLED);
-				Scanner ardout = new Scanner(sp.getInputStream());
-				if(sp.openPort()){
+				if (sp.openPort()) {
 					System.out.println("Scanner port is opened");
-					 final ThreadPoolExecutor executor = 
-							  (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+					byte[] b = "<<<A0035;>>>".getBytes();
+					sp.writeBytes(b, 20);
+					byte[] b1 = "A0035".getBytes();
+					sp.writeBytes(b1, 20);
+					byte[] b2 = "<<<!A0035;>>>".getBytes();
+					sp.writeBytes(b2, 20);
+					byte[] b3 = "<<<?A0035;>>>".getBytes();
+					sp.writeBytes(b3, 20);
+					byte[] b4 = "Start: <<<A0035;>>>".getBytes();
+					sp.writeBytes(b4, 20);
+					byte[] b5 = "<<<A0035; >>>".getBytes();
+					sp.writeBytes(b5, 20);
+					byte[] b6 = "<<<A 0035;>>>".getBytes();
+					sp.writeBytes(b6, 20);
+					byte[] b7 = "<<<A 0035; >>>".getBytes();
+					sp.writeBytes(b7, 20);
+					byte[] b8 = "<<< A0035; >>>".getBytes();
+					sp.writeBytes(b8, 20);
+					final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
-							executor.submit(new Runnable() {
-							     @Override 
-							     public void run() { 
-							    	 while(ardout.hasNextLine()) {
-							    		 String res_barcode = ardout.nextLine();
-							    		 
-							    		 System.out.println("barcode : "+res_barcode);
-							    		 scan.setText(res_barcode);
-							    		 break;
-							    	 }
-							     
-							     }
-							});
-							
-					
+					executor.submit(new Runnable() {
+						@Override
+						public void run() {
+							Scanner ardout = new Scanner(sp.getInputStream());
+
+							while (ardout.hasNextLine()) {
+								String res_barcode = ardout.nextLine();
+
+								System.out.println("barcode : " + res_barcode);
+								scan.setText(res_barcode);
+								byte[] bb = "<<<A0036;>>>".getBytes();
+								sp.writeBytes(bb, 20);
+								break;
+							}
+
+						}
+					});
+
 				}
 
-			/*	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				if (barcodeScanner.getBarcodetext().equals("noValue")) {
-					try {
-						LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_FAILURE);
+				/*
+				 * try { Thread.sleep(5000); } catch (InterruptedException e1) {
+				 * e1.printStackTrace(); } if
+				 * (barcodeScanner.getBarcodetext().equals("noValue")) { try {
+				 * LogFile.logfile(logDate + "\s " + LOG_FULFILLMENT_PRODUCT_CODE_FAILURE);
+				 * 
+				 * } catch (Exception ex) { ex.printStackTrace(); } Alert errorAlert = new
+				 * Alert(AlertType.ERROR);
+				 * errorAlert.setHeaderText(FULFILLMENT_PRODUCT_CODE_FAILURE_ERROR_ALERT_HEADER)
+				 * ; errorAlert.setContentText(FULFILLMENT_PRODUCT_CODE_FAILURE_ERROR_ALERT);
+				 * errorAlert.showAndWait(); } else {
+				 * scan.setText(barcodeScanner.getBarcodetext()); } String baseDir = "." +
+				 * File.separator + "Logs";
+				 */
+				// File file = new File(baseDir + File.separator + "barcode.png");
 
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					Alert errorAlert = new Alert(AlertType.ERROR);
-					errorAlert.setHeaderText(FULFILLMENT_PRODUCT_CODE_FAILURE_ERROR_ALERT_HEADER);
-					errorAlert.setContentText(FULFILLMENT_PRODUCT_CODE_FAILURE_ERROR_ALERT);
-					errorAlert.showAndWait();
-				} else {
-					scan.setText(barcodeScanner.getBarcodetext());
-				}
-				String baseDir = "." + File.separator + "Logs";*/
-				//File file = new File(baseDir + File.separator + "barcode.png");
-
-			//	file.delete();
+				// file.delete();
 
 			}
 		});
@@ -3224,14 +3343,13 @@ public class SmartBox extends Application {
 		fulfillmentDoorNametext = new Label("");
 		fulfillmentDoorNametext.setTextFill(Color.WHITE);
 		fulfillmentDoorNametext.setTextAlignment(TextAlignment.CENTER);
-		fulfillmentDoorNametext.setFont(
-				Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, 15));
+		fulfillmentDoorNametext.setFont(Font.font(fontName, FontWeight.BOLD, FontPosture.REGULAR, 15));
 		fulfillmentDoorNametext.setText("");
 		delHbox5.getChildren().add(fulfillmentDoorNametext);
 		delHbox5.setAlignment(Pos.CENTER);
 
 		vbox = new VBox();
-		vbox.getChildren().addAll(delHbox5,delHbox0, delHbox1, delHbox3);
+		vbox.getChildren().addAll(delHbox5, delHbox0, delHbox1, delHbox3);
 		vbox.setAlignment(Pos.CENTER);
 
 		delHbox2 = new HBox();
